@@ -1,0 +1,46 @@
+/* Image Tea Custom Styling */
+/* Landing Page Button Styling */
+
+.btn-image-tea {
+  background-color: #53a11b;
+  border-color: #53a11b;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-image-tea:hover {
+  background-color: #4a8f18;
+  border-color: #4a8f18;
+  color: white;
+  box-shadow: 0 0 15px rgba(83, 161, 27, 0.6), 0 0 30px rgba(83, 161, 27, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-image-tea-outline {
+  border-color: #53a11b;
+  color: #53a11b;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-image-tea-outline:hover {
+  background-color: #53a11b;
+  border-color: #53a11b;
+  color: white;
+  box-shadow: 0 0 15px rgba(83, 161, 27, 0.6), 0 0 30px rgba(83, 161, 27, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Feature Icons Custom Color */
+.feature-icon-green {
+  color: #53a11b !important;
+}
+
+/* Custom Accent Color Override */
+.text-image-tea {
+  color: #53a11b !important;
+}
+
+.bg-image-tea {
+  background-color: #53a11b !important;
+}
