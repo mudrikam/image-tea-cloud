@@ -2,6 +2,11 @@
 // Image Tea Cloud Template Scripts
 // Theme management and homepage redirect functionality
 
+// Immediate redirect check - execute before DOM loads
+if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.hash) {
+  window.location.replace('/p/home.html');
+}
+
 function setTheme(theme) {
   if (theme === 'auto') {
     document.documentElement.removeAttribute('data-bs-theme');
@@ -44,14 +49,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const theme = getPreferredTheme();
   setTheme(theme);
   
-  // Redirect homepage to landing page - works on all devices including mobile
-  const currentPath = window.location.pathname;
-  const currentSearch = window.location.search;
-  const currentHash = window.location.hash;
-  
-  // Check if it's homepage (desktop or mobile with ?m=1) and redirect
-  if ((currentPath === '/' || currentPath === '/index.html') && !currentHash) {
-    // Allow redirect even with ?m=1 parameter for mobile
+  // Secondary redirect check in case first one failed
+  if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.hash) {
     window.location.replace('/p/home.html');
   }
 });
