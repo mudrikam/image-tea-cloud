@@ -37,10 +37,14 @@
 }
 
 .feature-icon {
-  padding: 1rem;
-  background-color: rgba(83, 161, 27, 0.08);
-  border-radius: 1rem;
-  margin-bottom: 1rem;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.feature-icon .icon-container-lg {
+  padding: 1.5rem;
 }
 
 /* Custom Accent Color Override */
