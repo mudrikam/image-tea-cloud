@@ -15,41 +15,91 @@
         
         <!-- Description -->
         <p class="lead mb-4">
-          Metadata generator dari Desainia Studio. Solusi generate metadata dengan AI Gemini dan OpenAI, mudah dan cepat.
+          Generator metadata dari Desainia Studio. Solusi untuk menghasilkan metadata dengan AI Gemini dan OpenAI, mudah dan cepat.
         </p>        <!-- Action Buttons -->
         <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
-          <button class="btn btn-image-tea btn-lg px-4 py-2">
-            <i class="fas fa-download me-2"></i>Download Aplikasi
-          </button>
-          <button class="btn btn-image-tea-outline btn-lg px-4 py-2">
+          <a href="https://github.com/mudrikam/Image-Tea-mini" target="_blank" class="btn btn-primary-green btn-lg px-4 py-2 text-decoration-none">
+            <i class="fas fa-download me-2"></i>Unduh Aplikasi
+          </a>
+          <button class="btn btn-outline-green btn-lg px-4 py-2">
             <i class="fas fa-globe me-2"></i>Buka Online Gratis
           </button>
-          <button class="btn btn-image-tea-outline btn-lg px-4 py-2">
+          <button class="btn btn-outline-green btn-lg px-4 py-2">
             <i class="fas fa-book me-2"></i>Lihat Dokumentasi
           </button>
-        </div>
-        
-        <!-- API Demo -->
-        <div class="bg-body-tertiary rounded p-3 text-start mb-4" style="font-family: 'Courier New', monospace;">
-          <div class="text-success mb-2">$ curl -X POST https://api.image-tea.cloud/upload</div>
-          <div class="text-body-secondary">--header "Authorization: Bearer YOUR_API_KEY"</div>
-          <div class="text-body-secondary">--form "image=@photo.jpg"</div>
         </div>
         
         <!-- Stats -->
         <div class="row text-center mt-5">
           <div class="col-md-4 mb-3">
-            <div class="h3 fw-bold text-warning">99.9%</div>
-            <div class="small">Uptime</div>
+            <div class="h3 fw-bold text-primary-green">99.9%</div>
+            <div class="small">Waktu Aktif</div>
           </div>
           <div class="col-md-4 mb-3">
-            <div class="h3 fw-bold text-warning">&lt;200ms</div>
-            <div class="small">Response Time</div>
+            <div class="h3 fw-bold text-primary-green">&lt;200ms</div>
+            <div class="small">Waktu Respon</div>
           </div>
           <div class="col-md-4 mb-3">
-            <div class="h3 fw-bold text-warning">1M+</div>
-            <div class="small">Images Processed</div>
+            <div class="h3 fw-bold text-primary-green">1M+</div>
+            <div class="small">Gambar Diproses</div>
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Installation Guide -->
+<div class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="fw-bold mb-4 text-center text-body-emphasis">Panduan Instalasi</h2>        <p class="text-center text-body-secondary mb-5">Sangat mudah:</p>
+        
+        <div class="mb-4">
+          <h4 class="fw-bold mb-3 text-body-emphasis">Unduh:</h4>
+          <div class="bg-dark text-light p-3 rounded mb-3">
+            <code>
+              git clone https://github.com/mudrikam/Image-Tea-mini.git<br>
+              cd Image-Tea-mini
+            </code>
           </div>
+          <p class="text-body-secondary small">
+            (Tidak tahu itu apa? Klik tombol hijau "Code" di halaman GitHub lalu "Download ZIP". Ekstrak ke folder manapun.)
+          </p>
+        </div>
+        
+        <div class="mb-4">
+          <h4 class="fw-bold mb-3 text-body-emphasis">Jalankan:</h4>
+          
+          <div class="mb-3">
+            <h5 class="text-body-emphasis"># Windows</h5>
+            <div class="bg-dark text-light p-3 rounded mb-2">
+              <code>Launcher.bat</code>
+            </div>
+            <p class="text-body-secondary small">
+              (Klik dua kali file Launcher.bat. Hanya itu.)
+            </p>
+          </div>
+          
+          <div class="mb-3">
+            <h5 class="text-body-emphasis"># Linux & MacOS</h5>
+            <div class="bg-dark text-light p-3 rounded mb-2">
+              <code>
+                chmod +x Launcher.sh<br>
+                ./Launcher.sh
+              </code>
+            </div>
+          </div>
+        </div>
+        
+        <div class="alert alert-info">
+          <p class="mb-0 small">
+            <strong>Catatan:</strong> Saya menguji ini di VM karena belum mampu beli Mac. Tapi secara teori, menurut dokumentasi Python, ini harus berjalan di semua platform. Jika Anda menemukan cara yang lebih baik untuk menjalankan ini di Linux atau macOS, tolong buat pull request!
+          </p>
+        </div>
+        
+        <div class="text-center mt-4">
+          <h4 class="fw-bold text-primary-green">Selesai!</h4>
         </div>
       </div>
     </div>
@@ -65,11 +115,10 @@
         <p class="text-body-secondary">Semua yang Anda butuhkan untuk mengelola gambar</p>
       </div>
     </div>
-    
-    <div class="row g-4">
+      <div class="row g-4">
       <div class="col-md-4 text-center">
         <div class="feature-icon mb-3">
-          <i class="fas fa-upload fa-3x text-primary"></i>
+          <i class="fas fa-upload fa-3x text-primary-green"></i>
         </div>
         <h5 class="text-body-emphasis">Upload Mudah</h5>
         <p class="text-body-secondary">Upload gambar dengan drag & drop atau API endpoint</p>
@@ -77,25 +126,18 @@
       
       <div class="col-md-4 text-center">
         <div class="feature-icon mb-3">
-          <i class="fas fa-compress-alt fa-3x text-success"></i>
+          <i class="fas fa-compress-alt fa-3x text-primary-green"></i>
         </div>
-        <h5 class="text-body-emphasis">Auto Compress</h5>
+        <h5 class="text-body-emphasis">Kompresi Otomatis</h5>
         <p class="text-body-secondary">Kompresi otomatis tanpa mengurangi kualitas</p>
       </div>
       
       <div class="col-md-4 text-center">
         <div class="feature-icon mb-3">
-          <i class="fas fa-expand-arrows-alt fa-3x text-warning"></i>
+          <i class="fas fa-expand-arrows-alt fa-3x text-primary-green"></i>
         </div>
-        <h5 class="text-body-emphasis">Smart Resize</h5>
-        <p class="text-body-secondary">Resize responsif untuk berbagai device</p>
+        <h5 class="text-body-emphasis">Resize Cerdas</h5>
+        <p class="text-body-secondary">Resize responsif untuk berbagai perangkat</p>
       </div>
-    </div>
-  </div>
+    </div>  </div>
 </div>
-
-<style>
-.feature-icon {
-  padding: 1rem;
-}
-</style>
