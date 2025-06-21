@@ -1,53 +1,31 @@
 /* Image Tea Custom Styling */
-/* CSS Variables */
-:root {
-  --primary-green: #53a11b;
-  --primary-green-hover: #467a16;
-  --primary-green-light: #6bb324;
-}
-
 /* Landing Page Button Styling */
-.btn-image-tea, .btn-primary-green {
-  background-color: var(--primary-green);
-  border-color: var(--primary-green);
+
+.btn-image-tea {
+  background-color: #53a11b;
+  border-color: #53a11b;
   color: white;
   transition: all 0.3s ease;
 }
 
-.btn-image-tea:hover, .btn-primary-green:hover {
-  background-color: var(--primary-green-hover);
-  border-color: var(--primary-green-hover);
+.btn-image-tea:hover {
+  background-color: #4a8f18;
+  border-color: #4a8f18;
   color: white;
   box-shadow: 0 0 15px rgba(83, 161, 27, 0.6), 0 0 30px rgba(83, 161, 27, 0.4);
   transform: translateY(-2px);
 }
 
 .btn-image-tea-outline {
-  border-color: var(--primary-green);
-  color: var(--primary-green);
+  border-color: #53a11b;
+  color: #53a11b;
   background-color: transparent;
   transition: all 0.3s ease;
 }
 
 .btn-image-tea-outline:hover {
-  background-color: var(--primary-green);
-  border-color: var(--primary-green);
-  color: white;
-  box-shadow: 0 0 15px rgba(83, 161, 27, 0.6), 0 0 30px rgba(83, 161, 27, 0.4);
-  transform: translateY(-2px);
-}
-
-/* Outline Green Button Variant */
-.btn-outline-green {
-  border-color: var(--primary-green);
-  color: var(--primary-green);
-  background-color: transparent;
-  transition: all 0.3s ease;
-}
-
-.btn-outline-green:hover {
-  background-color: var(--primary-green);
-  border-color: var(--primary-green);
+  background-color: #53a11b;
+  border-color: #53a11b;
   color: white;
   box-shadow: 0 0 15px rgba(83, 161, 27, 0.6), 0 0 30px rgba(83, 161, 27, 0.4);
   transform: translateY(-2px);
@@ -55,18 +33,14 @@
 
 /* Feature Icons Custom Color */
 .feature-icon-green {
-  color: var(--primary-green) !important;
-}
-
-.feature-icon {
-  padding: 1rem;
+  color: #53a11b !important;
 }
 
 /* Custom Accent Color Override */
-.text-image-tea, .text-primary-green {
-  color: var(--primary-green) !important;
+.text-image-tea {
+  color: #53a11b !important;
 }
 
 .bg-image-tea {
-  background-color: var(--primary-green) !important;
+  background-color: #53a11b !important;
 }
