@@ -1,0 +1,134 @@
+<div class="container">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0"><i class="fas fa-eye me-2"></i>OpenAI Image Analyzer</h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label fw-bold">
+          <i class="fas fa-key me-2"></i>OpenAI API Key:
+        </label>
+        <input type="password" id="apikey" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">
+          <i class="fas fa-comment-dots me-2"></i>Prompt:
+        </label>
+        <input type="text" id="prompt" value="What is in this image?" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">
+          <i class="fas fa-upload me-2"></i>Upload Image:
+        </label>
+        <input type="file" id="imagefile" accept="image/*" onchange="previewImage()" class="form-control">
+      </div>
+
+      <div class="mb-3" id="preview-container" style="display: none;">
+        <label class="form-label fw-bold">
+          <i class="fas fa-image me-2"></i>Image Preview:
+        </label>
+        <div class="border rounded p-3 bg-light text-center">
+          <img id="preview" class="img-fluid rounded" style="max-height: 300px;">
+        </div>
+      </div>
+
+      <div class="d-grid">
+        <button onclick="askOpenAI()" class="btn btn-primary btn-lg">
+          <i class="fas fa-magic me-2"></i>Ask AI
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4" id="result-card" style="display: none;">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0"><i class="fas fa-robot me-2"></i>AI Response</h5>
+    </div>
+    <div class="card-body">
+      <pre id="result" style="white-space: pre-wrap; background: transparent; border: none; padding: 0;"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+function previewImage() {
+  const file = document.getElementById("imagefile").files[0];
+  const previewContainer = document.getElementById("preview-container");
+  
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const preview = document.getElementById("preview");
+      preview.src = e.target.result;
+      previewContainer.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewContainer.style.display = "none";
+  }
+}
+
+async function askOpenAI() {
+  const apikey = document.getElementById("apikey").value.trim();
+  const prompt = document.getElementById("prompt").value.trim();
+  const resultEl = document.getElementById("result");
+  const resultCard = document.getElementById("result-card");
+  const file = document.getElementById("imagefile").files[0];
+
+  if (!apikey || !prompt || !file) {
+    alert("Please fill in all fields and upload an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function () {
+    const base64Image = reader.result;
+
+    resultCard.style.display = "block";
+    resultEl.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Sending to OpenAI...</p></div>';
+
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + apikey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: prompt },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: base64Image,
+                  }
+                }
+              ]
+            }
+          ],
+          max_tokens: 1000
+        })
+      });
+
+      const data = await res.json();
+      if (data.choices && data.choices.length > 0) {
+        resultEl.textContent = data.choices[0].message.content;
+      } else {
+        resultEl.textContent = JSON.stringify(data, null, 2);
+      }
+    } catch (err) {
+      resultEl.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Error: ' + err.message + '</div>';
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+</script>
