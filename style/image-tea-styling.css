@@ -36,6 +36,10 @@
   color: #53a11b !important;
 }
 
+.feature-icon {
+  padding: 1rem;
+}
+
 /* Custom Accent Color Override */
 .text-image-tea {
   color: #53a11b !important;
