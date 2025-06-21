@@ -53,17 +53,20 @@
 <div class="py-5">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <h2 class="fw-bold mb-4 text-center text-body-emphasis">Panduan Instalasi</h2>
+      <div class="col-lg-8">        <h2 class="fw-bold mb-4 text-center text-body-emphasis">Panduan Instalasi</h2>
         <p class="text-center text-body-secondary mb-5">Sangat mudah:</p>
-        
-        <div class="mb-4">
-          <h4 class="fw-bold mb-3 text-body-emphasis">Unduh:</h4>
-          <div class="bg-dark text-light p-3 rounded mb-3">
-            <code>
+          <div class="mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-3 icon-container-lg">
+              <i class="fas fa-download fa-lg text-image-tea"></i>
+            </div>
+            <h4 class="fw-bold mb-0 text-body-emphasis">Unduh:</h4>
+          </div>
+          <div class="border rounded p-3 mb-3" style="background-color: var(--bs-secondary-bg); font-family: 'Courier New', monospace;">
+            <div class="text-body">
               git clone https://github.com/mudrikam/Image-Tea-mini.git<br>
               cd Image-Tea-mini
-            </code>
+            </div>
           </div>
           <p class="text-body-secondary small">
             (Tidak tahu itu apa? Klik tombol hijau "Code" di halaman GitHub lalu "Download ZIP". Ekstrak ke folder manapun.)
@@ -71,12 +74,22 @@
         </div>
         
         <div class="mb-4">
-          <h4 class="fw-bold mb-3 text-body-emphasis">Jalankan:</h4>
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-3 icon-container-lg">
+              <i class="fas fa-play fa-lg text-image-tea"></i>
+            </div>
+            <h4 class="fw-bold mb-0 text-body-emphasis">Jalankan:</h4>
+          </div>
           
           <div class="mb-3">
-            <h5 class="text-body-emphasis"># Windows</h5>
-            <div class="bg-dark text-light p-3 rounded mb-2">
-              <code>Launcher.bat</code>
+            <div class="d-flex align-items-center mb-2">
+              <div class="me-2 icon-container-sm">
+                <i class="fab fa-windows text-image-tea"></i>
+              </div>
+              <h5 class="text-body-emphasis mb-0">Windows</h5>
+            </div>
+            <div class="border rounded p-3 mb-2" style="background-color: var(--bs-secondary-bg); font-family: 'Courier New', monospace;">
+              <div class="text-body">Launcher.bat</div>
             </div>
             <p class="text-body-secondary small">
               (Klik dua kali file Launcher.bat. Hanya itu.)
@@ -84,24 +97,43 @@
           </div>
           
           <div class="mb-3">
-            <h5 class="text-body-emphasis"># Linux & MacOS</h5>
-            <div class="bg-dark text-light p-3 rounded mb-2">
-              <code>
+            <div class="d-flex align-items-center mb-2">
+              <div class="me-2 icon-container-sm">
+                <i class="fab fa-linux text-image-tea"></i>
+              </div>
+              <h5 class="text-body-emphasis mb-0">Linux & MacOS</h5>
+            </div>
+            <div class="border rounded p-3 mb-2" style="background-color: var(--bs-secondary-bg); font-family: 'Courier New', monospace;">
+              <div class="text-body">
                 chmod +x Launcher.sh<br>
                 ./Launcher.sh
-              </code>
+              </div>
             </div>
           </div>
         </div>
         
         <div class="alert alert-info">
-          <p class="mb-0 small">
-            <strong>Catatan:</strong> Saya menguji ini di VM karena belum mampu beli Mac. Tapi secara teori, menurut dokumentasi Python, ini harus berjalan di semua platform. Jika Anda menemukan cara yang lebih baik untuk menjalankan ini di Linux atau macOS, tolong buat pull request!
-          </p>
+          <div class="d-flex">
+            <div class="me-3 mt-1">
+              <div class="icon-container-sm">
+                <i class="fas fa-info text-image-tea"></i>
+              </div>
+            </div>
+            <div>
+              <p class="mb-0 small">
+                <strong>Catatan:</strong> Saya menguji ini di VM karena belum mampu beli Mac. Tapi secara teori, menurut dokumentasi Python, ini harus berjalan di semua platform. Jika Anda menemukan cara yang lebih baik untuk menjalankan ini di Linux atau macOS, tolong buat pull request!
+              </p>
+            </div>
+          </div>
         </div>
         
         <div class="text-center mt-4">
-          <h4 class="fw-bold text-image-tea">Selesai!</h4>
+          <div class="d-inline-flex align-items-center">
+            <div class="me-2 icon-container-check">
+              <i class="fas fa-check text-image-tea"></i>
+            </div>
+            <h4 class="fw-bold text-image-tea mb-0">Selesai!</h4>
+          </div>
         </div>
       </div>
     </div>
