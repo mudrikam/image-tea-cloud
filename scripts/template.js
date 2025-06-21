@@ -43,13 +43,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const theme = getPreferredTheme();
   setTheme(theme);
   
-  // Redirect homepage to landing page - works on all devices including mobile
-  const currentPath = window.location.pathname;
-  const currentSearch = window.location.search;
-  const currentHash = window.location.hash;
-  
-  // Check if it's homepage (desktop or mobile) and redirect
-  if ((currentPath === '/' || currentPath === '/index.html') && !currentHash) {
+  // Redirect homepage to landing page - works on all devices
+  if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.search && !window.location.hash) {
     window.location.replace('/p/home.html');
   }
 });
