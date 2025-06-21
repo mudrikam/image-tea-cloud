@@ -48,11 +48,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const currentSearch = window.location.search;
   const currentHash = window.location.hash;
   
-  // Check for homepage paths (including mobile version)
-  const isHomepage = (currentPath === '/' || currentPath === '/index.html') && !currentHash;
-  const isMobileHomepage = currentSearch === '?m=1' && !currentHash;
-  
-  if (isHomepage || isMobileHomepage) {
+  // Check if it's homepage (desktop or mobile) and redirect
+  if ((currentPath === '/' || currentPath === '/index.html') && !currentHash) {
     window.location.replace('/p/home.html');
   }
 });
