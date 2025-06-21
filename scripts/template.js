@@ -1,3 +1,4 @@
+
 // Image Tea Cloud Template Scripts
 // Theme management and homepage redirect functionality
 
