@@ -4,7 +4,8 @@
 
 // Immediate redirect check - execute before DOM loads
 if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.hash) {
-  window.location.replace('/p/home.html');
+  const searchParams = window.location.search;
+  window.location.replace('/p/home.html' + searchParams);
 }
 
 function setTheme(theme) {
@@ -48,9 +49,9 @@ setTheme(theme);
 window.addEventListener('DOMContentLoaded', () => {
   const theme = getPreferredTheme();
   setTheme(theme);
-  
-  // Secondary redirect check in case first one failed
+    // Secondary redirect check in case first one failed
   if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.hash) {
-    window.location.replace('/p/home.html');
+    const searchParams = window.location.search;
+    window.location.replace('/p/home.html' + searchParams);
   }
 });
