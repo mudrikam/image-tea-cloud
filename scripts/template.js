@@ -43,8 +43,16 @@ window.addEventListener('DOMContentLoaded', () => {
   const theme = getPreferredTheme();
   setTheme(theme);
   
-  // Redirect homepage to landing page - works on all devices
-  if ((window.location.pathname === '/' || window.location.pathname === '/index.html') && !window.location.search && !window.location.hash) {
+  // Redirect homepage to landing page - works on all devices including mobile
+  const currentPath = window.location.pathname;
+  const currentSearch = window.location.search;
+  const currentHash = window.location.hash;
+  
+  // Check for homepage paths (including mobile version)
+  const isHomepage = (currentPath === '/' || currentPath === '/index.html') && !currentHash;
+  const isMobileHomepage = currentSearch === '?m=1' && !currentHash;
+  
+  if (isHomepage || isMobileHomepage) {
     window.location.replace('/p/home.html');
   }
 });
