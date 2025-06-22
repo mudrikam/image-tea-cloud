@@ -133,12 +133,12 @@ code.text-image-tea {
 
 /* Template Navbar Styling */
 .navbar-image-tea {
-  background-color: #6c757d !important;
+  background-color: #53a11b !important;
   transition: background-color 0.3s ease;
 }
 
 [data-bs-theme="dark"] .navbar-image-tea {
-  background-color: #212529 !important;
+  background-color: #3d7914 !important;
 }
 
 .navbar-image-tea .navbar-nav .nav-link:hover {
