@@ -312,15 +312,13 @@ class VersionManager {
                     </div>
                 </div>
             `;
-        }
-
-        // Desktop versions section
+        }        // Desktop versions section
         if (latestVersion) {
             html += `
                 <div class="row mb-5">
                     <div class="col-12">
                         <div class="bg-image-tea text-white rounded-4 p-4 text-center">
-                            <i class="fas fa-star fa-2x mb-3"></i>
+                            <i class="fas fa-desktop fa-2x mb-3"></i>
                             <h3 class="fw-bold mb-2">Desktop Version Terbaru</h3>
                             <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
                             <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
