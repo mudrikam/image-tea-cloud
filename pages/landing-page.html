@@ -1,5 +1,6 @@
 <!-- Image Tea Landing Widget -->
 <link rel="stylesheet" href="https://mudrikam.github.io/image-tea-cloud/style/image-tea-styling.css">
+<script src="https://mudrikam.github.io/image-tea-cloud/scripts/versions.js"></script>
 
 <div class="text-center py-5">
   <div class="container">
@@ -250,80 +251,4 @@
   </div>
 </div>
 
-<script>
-// Fetch latest version from GitHub releases
-async function loadLatestVersion() {
-  try {
-    // Load desktop version from Image-Tea-mini repo
-    const desktopResponse = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/releases/latest');
-    if (desktopResponse.ok) {
-      const desktopData = await desktopResponse.json();
-      
-      // Update desktop version display
-      const versionElement = document.getElementById('desktop-version');
-      if (versionElement) {
-        versionElement.textContent = desktopData.tag_name;
-        versionElement.title = `Released: ${new Date(desktopData.published_at).toLocaleDateString()}`;
-      }
-      
-      // Update download link to latest release
-      const downloadButton = document.getElementById('download-latest');
-      if (downloadButton && desktopData.zipball_url) {
-        downloadButton.href = desktopData.zipball_url;
-        downloadButton.title = `Download ${desktopData.tag_name}`;
-      }
-    } else {
-      throw new Error('Failed to fetch desktop version');
-    }
-    
-    // Load online version from image-tea-cloud repo
-    const onlineResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/releases/latest');
-    if (onlineResponse.ok) {
-      const onlineData = await onlineResponse.json();
-      
-      // Update online version display
-      const onlineVersionElement = document.getElementById('online-version');
-      if (onlineVersionElement) {
-        onlineVersionElement.textContent = `${onlineData.tag_name} Web`;
-        onlineVersionElement.title = `Released: ${new Date(onlineData.published_at).toLocaleDateString()}`;
-      }
-    } else {
-      // Fallback for online version if no releases found
-      const onlineVersionElement = document.getElementById('online-version');
-      if (onlineVersionElement) {
-        onlineVersionElement.textContent = 'v2.1.0 Web';
-        onlineVersionElement.classList.remove('bg-info');
-        onlineVersionElement.classList.add('bg-secondary');
-      }
-    }
-    
-  } catch (error) {
-    console.error('Error fetching latest version:', error);
-    
-    // Fallback for desktop version
-    const versionElement = document.getElementById('desktop-version');
-    if (versionElement) {
-      versionElement.textContent = 'v2.1.0';
-      versionElement.classList.remove('bg-success');
-      versionElement.classList.add('bg-secondary');
-    }
-    
-    // Fallback for online version
-    const onlineVersionElement = document.getElementById('online-version');
-    if (onlineVersionElement) {
-      onlineVersionElement.textContent = 'v2.1.0 Web';
-      onlineVersionElement.classList.remove('bg-info');
-      onlineVersionElement.classList.add('bg-secondary');
-    }
-    
-    // Fallback to main branch if API fails
-    const downloadButton = document.getElementById('download-latest');
-    if (downloadButton) {
-      downloadButton.href = 'https://github.com/mudrikam/Image-Tea-mini/archive/refs/heads/main.zip';
-    }
-  }
-}
 
-// Load version when page loads
-document.addEventListener('DOMContentLoaded', loadLatestVersion);
-</script>

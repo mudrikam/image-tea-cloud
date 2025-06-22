@@ -1,6 +1,82 @@
-// Image Tea Versions Management Script
-// Fetches and displays version information from GitHub repository
+// Image Tea Versions Management
+// Handles version loading for both landing page and versions page
 
+// ===== LANDING PAGE VERSION LOADER =====
+// Loads latest versions for desktop and online apps on landing page
+async function loadLatestVersion() {
+  try {
+    // Load desktop version from Image-Tea-mini repo
+    const desktopResponse = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/releases/latest');
+    if (desktopResponse.ok) {
+      const desktopData = await desktopResponse.json();
+      
+      // Update desktop version display
+      const versionElement = document.getElementById('desktop-version');
+      if (versionElement) {
+        versionElement.textContent = desktopData.tag_name;
+        versionElement.title = `Released: ${new Date(desktopData.published_at).toLocaleDateString()}`;
+      }
+      
+      // Update download link to latest release
+      const downloadButton = document.getElementById('download-latest');
+      if (downloadButton && desktopData.zipball_url) {
+        downloadButton.href = desktopData.zipball_url;
+        downloadButton.title = `Download ${desktopData.tag_name}`;
+      }
+    } else {
+      throw new Error('Failed to fetch desktop version');
+    }
+    
+    // Load online version from image-tea-cloud repo
+    const onlineResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/releases/latest');
+    if (onlineResponse.ok) {
+      const onlineData = await onlineResponse.json();
+      
+      // Update online version display
+      const onlineVersionElement = document.getElementById('online-version');
+      if (onlineVersionElement) {
+        onlineVersionElement.textContent = `${onlineData.tag_name} Web`;
+        onlineVersionElement.title = `Released: ${new Date(onlineData.published_at).toLocaleDateString()}`;
+      }
+    } else {
+      // Fallback for online version if no releases found
+      const onlineVersionElement = document.getElementById('online-version');
+      if (onlineVersionElement) {
+        onlineVersionElement.textContent = 'v2.1.0 Web';
+        onlineVersionElement.classList.remove('bg-info');
+        onlineVersionElement.classList.add('bg-secondary');
+      }
+    }
+    
+  } catch (error) {
+    console.error('Error fetching latest version:', error);
+    
+    // Fallback for desktop version
+    const versionElement = document.getElementById('desktop-version');
+    if (versionElement) {
+      versionElement.textContent = 'v2.1.0';
+      versionElement.classList.remove('bg-success');
+      versionElement.classList.add('bg-secondary');
+    }
+    
+    // Fallback for online version
+    const onlineVersionElement = document.getElementById('online-version');
+    if (onlineVersionElement) {
+      onlineVersionElement.textContent = 'v2.1.0 Web';
+      onlineVersionElement.classList.remove('bg-info');
+      onlineVersionElement.classList.add('bg-secondary');
+    }
+    
+    // Fallback to main branch if API fails
+    const downloadButton = document.getElementById('download-latest');
+    if (downloadButton) {
+      downloadButton.href = 'https://github.com/mudrikam/Image-Tea-mini/archive/refs/heads/main.zip';
+    }
+  }
+}
+
+// ===== VERSIONS PAGE MANAGER =====
+// Full version management for the dedicated versions page
 class VersionManager {
   constructor() {
     this.versions = [];
@@ -23,19 +99,18 @@ class VersionManager {
           commit: tag.commit
         }))
         .filter(version => this.isValidVersion(version.name))
-        .sort((a, b) => this.compareVersions(b.name, a.name)); // Descending order      
+        .sort((a, b) => this.compareVersions(b.name, a.name));
+      
       this.groupVersions();
       this.renderVersions();
-      this.updateLandingPageVersion();
-        } catch (error) {
+      
+    } catch (error) {
       console.error('Error fetching versions:', error);
       this.showError();
-      this.updateLandingPageVersionFallback();
     }
   }
   
   isValidVersion(versionName) {
-    // Accept versions like v1.0.0, v2.1, 1.0.0, etc.
     return /^v?\d+\.\d+(\.\d+)?/.test(versionName);
   }
   
@@ -46,7 +121,6 @@ class VersionManager {
     const partsA = cleanA.split('.').map(Number);
     const partsB = cleanB.split('.').map(Number);
     
-    // Pad arrays to same length
     while (partsA.length < 3) partsA.push(0);
     while (partsB.length < 3) partsB.push(0);
     
@@ -82,14 +156,10 @@ class VersionManager {
   formatVersionNumber(versionName) {
     return versionName.startsWith('v') ? versionName : `v${versionName}`;
   }
-    renderVersions() {
+  
+  renderVersions() {
     const container = document.getElementById('versions-container');
     const loadingState = document.getElementById('loading-state');
-    
-    // Only render full versions page if containers exist
-    if (!container || !loadingState) {
-      return;
-    }
     
     if (this.versions.length === 0) {
       this.showError();
@@ -99,11 +169,10 @@ class VersionManager {
     const latestVersion = this.getLatestVersion();
     const majorVersions = Object.keys(this.groupedVersions)
       .map(Number)
-      .sort((a, b) => b - a); // Descending order
+      .sort((a, b) => b - a);
     
     let html = '';
     
-    // Current Version Section
     if (latestVersion) {
       html += `
         <div class="row mb-5">
@@ -126,7 +195,6 @@ class VersionManager {
       `;
     }
     
-    // Version Groups
     html += '<div class="row g-4">';
     
     majorVersions.forEach(majorVersion => {
@@ -199,7 +267,6 @@ class VersionManager {
     
     html += '</div>';
     
-    // GitHub Link
     html += `
       <div class="mt-5 pt-4 border-top">
         <div class="text-center">
@@ -218,19 +285,6 @@ class VersionManager {
     container.classList.remove('d-none');
   }
   
-  updateLandingPageVersion() {
-    const latestVersion = this.getLatestVersion();
-    const versionElement = document.getElementById('desktop-version');
-    if (versionElement && latestVersion) {
-      versionElement.textContent = this.formatVersionNumber(latestVersion.name);
-      versionElement.title = `Latest release: ${latestVersion.name}`;
-    } else if (versionElement) {
-      versionElement.textContent = 'v2.1.0';
-      versionElement.classList.remove('bg-success');
-      versionElement.classList.add('bg-secondary');
-    }
-  }
-  
   getVersionDescription(majorVersion, count) {
     const descriptions = {
       5: `Versi terbaru dengan fitur terlengkap. ${count} rilis tersedia.`,
@@ -242,43 +296,24 @@ class VersionManager {
     
     return descriptions[majorVersion] || `${count} rilis tersedia untuk versi ${majorVersion}.`;
   }
-    updateLandingPageVersionFallback() {
-    const versionElement = document.getElementById('desktop-version');
-    if (versionElement) {
-      versionElement.textContent = 'v2.1.0';
-      versionElement.classList.remove('bg-success');
-      versionElement.classList.add('bg-secondary');
-    }
-  }
   
   showError() {
-    const loadingState = document.getElementById('loading-state');
-    const errorState = document.getElementById('error-state');
-    
-    if (loadingState) {
-      loadingState.classList.add('d-none');
-    }
-    if (errorState) {
-      errorState.classList.remove('d-none');
-    }
-    
-    // Handle landing page version fallback
-    const versionElement = document.getElementById('desktop-version');
-    if (versionElement) {
-      versionElement.textContent = 'v2.1.0';
-      versionElement.classList.remove('bg-success');
-      versionElement.classList.add('bg-secondary');
-    }
+    document.getElementById('loading-state').classList.add('d-none');
+    document.getElementById('error-state').classList.remove('d-none');
   }
 }
 
-// Initialize version manager when page loads
+// ===== INITIALIZATION =====
+// Auto-initialize based on page type
 document.addEventListener('DOMContentLoaded', () => {
-  const versionManager = new VersionManager();
-  versionManager.fetchVersions();
+  // Check if this is the versions page
+  if (document.getElementById('versions-container')) {
+    const versionManager = new VersionManager();
+    versionManager.fetchVersions();
+  }
+  
+  // Check if this is the landing page
+  if (document.getElementById('desktop-version') || document.getElementById('online-version')) {
+    loadLatestVersion();
+  }
 });
-
-// Export for potential external use
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = VersionManager;
-}
