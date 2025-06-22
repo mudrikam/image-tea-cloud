@@ -93,3 +93,17 @@
   font-family: 'Courier New', monospace;
   border: 1px solid rgba(83, 161, 27, 0.1);
 }
+
+/* Icon Container Styling - Universal */
+.icon-container {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(83, 161, 27, 0.1);
+  border: 2px solid rgba(83, 161, 27, 0.2);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.icon-container i {
+  color: #53a11b;
+}
