@@ -286,41 +286,41 @@ class VersionManager {
                         <div class="bg-info text-white rounded-4 p-4">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <div class="text-center text-md-start">
-                                        <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-3">
-                                            <i class="fas fa-globe fa-3x me-3 text-white"></i>
-                                            <div>
-                                                <h3 class="fw-bold mb-1 text-white">Image Tea Web Version</h3>
-                                                <h4 class="mb-1 text-white">${this.formatVersionNumber(this.webVersion.name)}</h4>
-                                                ${this.webVersion.date ? `<small class="d-block opacity-75">${this.formatDate(this.webVersion.date)}</small>` : '<small class="d-block opacity-75">22 Juni 2025</small>'}
-                                            </div>
-                                        </div>
-                                        <p class="mb-4 opacity-90 fs-6">${this.webVersion.description}</p>
-                                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-md-start">
-                                            <a href="https://www.image-tea.cloud" class="btn btn-light btn-lg">
-                                                <i class="fas fa-play me-2"></i>Buka Web App
-                                            </a>
-                                            <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light btn-lg">
-                                                <i class="fab fa-github me-2"></i>Lihat di GitHub
-                                            </a>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-globe fa-2x me-3"></i>
+                                        <div>
+                                            <h3 class="fw-bold mb-1">Image Tea Web Version</h3>
+                                            <h4 class="mb-0">${this.formatVersionNumber(this.webVersion.name)}</h4>
+                                            ${this.webVersion.date ? `<small class="opacity-75">${this.formatDate(this.webVersion.date)}</small>` : ''}
                                         </div>
                                     </div>
+                                    <p class="mb-3 opacity-90">${this.webVersion.description}</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="https://www.image-tea.cloud" class="btn btn-light">
+                                            <i class="fas fa-play me-2"></i>Buka Web App
+                                        </a>
+                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light">
+                                            <i class="fab fa-github me-2"></i>Lihat di GitHub
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 text-center d-none d-md-block">
-                                    <i class="fas fa-cloud fa-5x opacity-25"></i>
+                                <div class="col-md-4 text-center">
+                                    <i class="fas fa-cloud fa-4x opacity-50"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-        } // Desktop versions section
+        }
+
+        // Desktop versions section
         if (latestVersion) {
             html += `
                 <div class="row mb-5">
                     <div class="col-12">
                         <div class="bg-image-tea text-white rounded-4 p-4 text-center">
-                            <i class="fas fa-desktop fa-2x mb-3"></i>
+                            <i class="fas fa-star fa-2x mb-3"></i>
                             <h3 class="fw-bold mb-2">Desktop Version Terbaru</h3>
                             <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
                             <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
@@ -375,9 +375,9 @@ class VersionManager {
                 <small class="text-body-secondary">${this.formatDate(version.date)}</small>
               </div>
               ${isFirst ? '<span class="badge bg-success ms-2 small">Latest</span>' : ''}
-            </div>            
+            </div>
             <div class="btn-group btn-group-sm">
-              <a href="${version.zipball_url}" class="btn btn-outline-image-tea btn-sm hover-success" title="Download ZIP">
+              <a href="${version.zipball_url}" class="btn btn-outline-image-tea btn-sm" title="Download ZIP">
                 <i class="fas fa-download"></i>
               </a>
             </div>
