@@ -26,8 +26,7 @@ async function loadLatestVersion() {
     } else {
       throw new Error('Failed to fetch desktop version');
     }
-    
-    // Load online version from image-tea-cloud repo
+      // Load online version from image-tea-cloud repo
     const onlineResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/releases/latest');
     if (onlineResponse.ok) {
       const onlineData = await onlineResponse.json();
@@ -39,12 +38,31 @@ async function loadLatestVersion() {
         onlineVersionElement.title = `Released: ${new Date(onlineData.published_at).toLocaleDateString()}`;
       }
     } else {
-      // Fallback for online version if no releases found
-      const onlineVersionElement = document.getElementById('online-version');
-      if (onlineVersionElement) {
-        onlineVersionElement.textContent = 'v2.1.0 Web';
-        onlineVersionElement.classList.remove('bg-info');
-        onlineVersionElement.classList.add('bg-secondary');
+      // Try to get latest tag if no releases found
+      try {
+        const tagsResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/tags?per_page=1');
+        if (tagsResponse.ok) {
+          const tagsData = await tagsResponse.json();
+          if (tagsData.length > 0) {
+            const onlineVersionElement = document.getElementById('online-version');
+            if (onlineVersionElement) {
+              onlineVersionElement.textContent = `${tagsData[0].name} Web`;
+              onlineVersionElement.title = 'Latest version from tags';
+            }
+          } else {
+            throw new Error('No tags found');
+          }
+        } else {
+          throw new Error('Failed to fetch tags');
+        }
+      } catch (tagError) {
+        // Final fallback for online version
+        const onlineVersionElement = document.getElementById('online-version');
+        if (onlineVersionElement) {
+          onlineVersionElement.textContent = 'v2.1.0 Web';
+          onlineVersionElement.classList.remove('bg-info');
+          onlineVersionElement.classList.add('bg-secondary');
+        }
       }
     }
     
@@ -65,12 +83,12 @@ async function loadLatestVersion() {
       onlineVersionElement.textContent = 'v2.1.0 Web';
       onlineVersionElement.classList.remove('bg-info');
       onlineVersionElement.classList.add('bg-secondary');
-    }
-    
+    }    
     // Fallback to main branch if API fails
     const downloadButton = document.getElementById('download-latest');
     if (downloadButton) {
-      downloadButton.href = 'https://github.com/mudrikam/Image-Tea-mini/archive/refs/heads/main.zip';
+      // Keep original href as fallback - should be latest release, not main branch
+      downloadButton.title = 'Download latest version';
     }
   }
 }
