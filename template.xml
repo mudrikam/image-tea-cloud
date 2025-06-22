@@ -53,13 +53,17 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#download">Download</a>
+                            <a class="nav-link text-white"
+                                href="https://www.image-tea.cloud/p/versions.html"
+                                target="_blank" rel="noopener">Download</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" href="#dokumentasi">Dokumentasi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#daftar-harga">Daftar Harga</a>
+                            <a class="nav-link text-white"
+                                href="https://www.image-tea.cloud/p/pricing.html"
+                                target="_blank" rel="noopener">Daftar Harga</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white"
@@ -120,7 +124,7 @@
                         <div class="d-flex align-items-center mb-3 mb-md-0">
                             <img
                                 src="https://mudrikam.github.io/image-tea-cloud/assets/icon/image_tea_logo_color.webp"
-                                alt="Image Tea" class="me-2" style="height: 24px;"/>
+                                alt="Image Tea" class="me-2" style="height: 24px;" />
                             <span class="text-body-secondary">© 2025 Desainia Studio</span>
                         </div>
                     </div>
@@ -129,7 +133,7 @@
                             class="list-unstyled d-flex justify-content-md-end justify-content-start gap-3 mb-0">
                             <li>
                                 <a href="https://www.image-tea.cloud/p/versions.html"
-                                    class="text-body-secondary text-decoration-none">Versions</a>
+                                    class="text-body-secondary text-decoration-none">Versi Lawas</a>
                             </li>
                             <li>
                                 <a href="https://github.com/mudrikam/Image-Tea-mini" target="_blank"
@@ -138,7 +142,7 @@
                             <li>
                                 <a href="https://chat.whatsapp.com/CMQvDxpCfP647kBBA6dRn3"
                                     target="_blank" class="text-body-secondary text-decoration-none">
-                                    Community</a>
+                                    Komunitas</a>
                             </li>
                         </ul>
                     </div>
