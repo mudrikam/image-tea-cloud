@@ -130,3 +130,49 @@ code.text-image-tea {
 [data-bs-theme="dark"] .bg-gradient-image-tea {
   background: linear-gradient(180deg, rgba(83, 161, 27, 0.233) 0%, rgba(83, 161, 27, 0) 27%);
 }
+
+/* Template Navbar Styling */
+.navbar-image-tea {
+  background-color: #6c757d !important;
+  transition: background-color 0.3s ease;
+}
+
+[data-bs-theme="dark"] .navbar-image-tea {
+  background-color: #212529 !important;
+}
+
+.navbar-image-tea .navbar-nav .nav-link:hover {
+  opacity: 0.8;
+}
+
+/* Template Page Elements - Hide unnecessary Blogger elements */
+.feed-links {
+  display: none !important;
+}
+
+.blog-pager,
+.status-msg-wrap {
+  display: none !important;
+}
+
+.post-title {
+  display: none !important;
+}
+
+/* Theme switcher button styling */
+.theme-icon {
+  display: none;
+}
+
+[data-bs-theme="light"] .theme-icon-light {
+  display: inline-block;
+}
+
+[data-bs-theme="dark"] .theme-icon-dark {
+  display: inline-block;
+}
+
+html:not([data-bs-theme]) .theme-icon-auto,
+[data-bs-theme="auto"] .theme-icon-auto {
+  display: inline-block;
+}
