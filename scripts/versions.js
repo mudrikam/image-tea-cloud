@@ -27,10 +27,10 @@ class VersionManager {
       this.groupVersions();
       this.renderVersions();
       this.updateLandingPageVersion();
-      
-    } catch (error) {
+        } catch (error) {
       console.error('Error fetching versions:', error);
       this.showError();
+      this.updateLandingPageVersionFallback();
     }
   }
   
@@ -242,10 +242,33 @@ class VersionManager {
     
     return descriptions[majorVersion] || `${count} rilis tersedia untuk versi ${majorVersion}.`;
   }
+    updateLandingPageVersionFallback() {
+    const versionElement = document.getElementById('desktop-version');
+    if (versionElement) {
+      versionElement.textContent = 'v2.1.0';
+      versionElement.classList.remove('bg-success');
+      versionElement.classList.add('bg-secondary');
+    }
+  }
   
   showError() {
-    document.getElementById('loading-state').classList.add('d-none');
-    document.getElementById('error-state').classList.remove('d-none');
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    
+    if (loadingState) {
+      loadingState.classList.add('d-none');
+    }
+    if (errorState) {
+      errorState.classList.remove('d-none');
+    }
+    
+    // Handle landing page version fallback
+    const versionElement = document.getElementById('desktop-version');
+    if (versionElement) {
+      versionElement.textContent = 'v2.1.0';
+      versionElement.classList.remove('bg-success');
+      versionElement.classList.add('bg-secondary');
+    }
   }
 }
 
