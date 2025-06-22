@@ -261,9 +261,7 @@ class VersionManager {
         } catch (error) {
             return 'Tanggal tidak valid';
         }
-    }
-
-    renderVersions() {
+    }    renderVersions() {
         const container = document.getElementById('versions-container');
         const loadingState = document.getElementById('loading-state');
 
@@ -281,32 +279,32 @@ class VersionManager {
         // Add web version section first
         if (this.webVersion) {
             html += `
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <div class="bg-info text-white rounded-4 p-4">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-globe fa-2x me-3"></i>
-                                        <div>
-                                            <h3 class="fw-bold mb-1">Image Tea Web Version</h3>
-                                            <h4 class="mb-0">${this.formatVersionNumber(this.webVersion.name)}</h4>
-                                            ${this.webVersion.date ? `<small class="opacity-75">${this.formatDate(this.webVersion.date)}</small>` : ''}
-                                        </div>
+                <div class="mb-5">
+                    <div class="bg-image-tea text-white rounded-4 p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <i class="fas fa-globe fa-3x opacity-75"></i>
                                     </div>
-                                    <p class="mb-3 opacity-90">${this.webVersion.description}</p>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <a href="https://www.image-tea.cloud" class="btn btn-light">
-                                            <i class="fas fa-play me-2"></i>Buka Web App
-                                        </a>
-                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light">
-                                            <i class="fab fa-github me-2"></i>Lihat di GitHub
-                                        </a>
+                                    <div>
+                                        <h3 class="fw-bold mb-1">Image Tea Web Version</h3>
+                                        <h4 class="mb-1">${this.formatVersionNumber(this.webVersion.name)}</h4>
+                                        ${this.webVersion.date ? `<small class="opacity-75">${this.formatDate(this.webVersion.date)}</small>` : '<small class="opacity-75">Available now</small>'}
                                     </div>
                                 </div>
-                                <div class="col-md-4 text-center">
-                                    <i class="fas fa-cloud fa-4x opacity-50"></i>
+                                <p class="mb-3 opacity-90">${this.webVersion.description}</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="https://www.image-tea.cloud" class="btn btn-light">
+                                        <i class="fas fa-play me-2"></i>Buka Web App
+                                    </a>
+                                    <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light">
+                                        <i class="fab fa-github me-2"></i>Lihat di GitHub
+                                    </a>
                                 </div>
+                            </div>
+                            <div class="col-md-4 text-center d-none d-md-block">
+                                <i class="fas fa-cloud fa-6x opacity-25"></i>
                             </div>
                         </div>
                     </div>
@@ -314,31 +312,40 @@ class VersionManager {
             `;
         }
 
-        // Desktop versions section
+        // Desktop latest version highlight
         if (latestVersion) {
             html += `
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <div class="bg-image-tea text-white rounded-4 p-4 text-center">
-                            <i class="fas fa-star fa-2x mb-3"></i>
-                            <h3 class="fw-bold mb-2">Desktop Version Terbaru</h3>
-                            <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
-                            <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
-                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                                <a href="${latestVersion.zipball_url}" class="btn btn-light btn-lg">
-                                    <i class="fas fa-download me-2"></i>Download ZIP
-                                </a>
-                                <a href="${latestVersion.tarball_url}" class="btn btn-outline-light btn-lg">
-                                    <i class="fas fa-file-archive me-2"></i>Download TAR.GZ
-                                </a>
-                            </div>
+                <div class="mb-5">
+                    <div class="bg-success text-white rounded-4 p-4 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-star fa-2x mb-2"></i>
+                            <h3 class="fw-bold mb-1">Desktop Version Terbaru</h3>
+                            <h4 class="mb-1">${this.formatVersionNumber(latestVersion.name)}</h4>
+                            <p class="mb-0 opacity-75">${this.formatDate(latestVersion.date)}</p>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                            <a href="${latestVersion.zipball_url}" class="btn btn-light btn-lg">
+                                <i class="fas fa-download me-2"></i>Download ZIP
+                            </a>
+                            <a href="${latestVersion.tarball_url}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-file-archive me-2"></i>Download TAR.GZ
+                            </a>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        html += '<div class="row g-4">';
+        // All versions section header
+        html += `
+            <div class="mb-4">
+                <h2 class="h3 fw-bold text-body-emphasis mb-2">Semua Versi Desktop</h2>
+                <p class="text-body-secondary">Pilih versi yang sesuai dengan kebutuhan kamu</p>
+            </div>
+        `;
+
+        // Version cards
+        html += '<div class="row g-4 mb-5">';
 
         majorVersions.forEach(majorVersion => {
             const versions = this.groupedVersions[majorVersion];
@@ -346,84 +353,80 @@ class VersionManager {
             const latestInGroup = versions[0];
 
             html += `
-        <div class="col-lg-6 col-xl-4">
-          <div class="h-100">
-            <div class="bg-body-tertiary rounded-4 p-4 h-100 d-flex flex-column">
-              <div class="text-center mb-4">
-                <div class="icon-container-lg d-inline-flex align-items-center justify-content-center mb-3">
-                  <i class="fas fa-code-branch fa-2x text-image-tea"></i>
-                </div>
-                <h3 class="fw-bold text-body-emphasis mb-2">
-                  v${majorVersion}.x
-                  ${isLatestMajor ? '<span class="badge bg-image-tea ms-2">Latest</span>' : ''}
-                </h3>
-                <p class="text-body-secondary mb-0">
-                  ${this.getVersionDescription(majorVersion, versions.length)}
-                </p>
-              </div>
-              
-              <div class="flex-grow-1 mb-4">
-                <div class="border rounded-3 bg-body">
-      `;
-            versions.slice(0, 8).forEach((version, index) => {
+                <div class="col-lg-6">
+                    <div class="bg-body-tertiary rounded-4 p-4 h-100">
+                        <div class="text-center mb-4">
+                            <div class="icon-container-lg d-inline-flex align-items-center justify-content-center mb-3">
+                                <i class="fas fa-code-branch fa-2x text-image-tea"></i>
+                            </div>
+                            <h4 class="fw-bold text-body-emphasis mb-2">
+                                Version ${majorVersion}.x
+                                ${isLatestMajor ? '<span class="badge bg-image-tea ms-2">Latest</span>' : ''}
+                            </h4>
+                            <p class="text-body-secondary small mb-0">
+                                ${this.getVersionDescription(majorVersion, versions.length)}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="border rounded-3 bg-body overflow-hidden">
+            `;
+            
+            versions.slice(0, 5).forEach((version, index) => {
                 const isFirst = index === 0;
                 html += `
-          <div class="d-flex align-items-center justify-content-between p-3 ${index > 0 ? 'border-top' : ''}">
-            <div class="d-flex align-items-center">
-              <div>
-                <code class="text-image-tea fw-bold d-block">${this.formatVersionNumber(version.name)}</code>
-                <small class="text-body-secondary">${this.formatDate(version.date)}</small>
-              </div>
-              ${isFirst ? '<span class="badge bg-success ms-2 small">Latest</span>' : ''}
-            </div>
-            <div class="btn-group btn-group-sm">
-              <a href="${version.zipball_url}" class="btn btn-outline-image-tea btn-sm" title="Download ZIP">
-                <i class="fas fa-download"></i>
-              </a>
-            </div>
-          </div>
-        `;
+                                <div class="d-flex align-items-center justify-content-between p-3 ${index > 0 ? 'border-top' : ''}">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <code class="text-image-tea fw-bold">${this.formatVersionNumber(version.name)}</code>
+                                            ${isFirst ? '<span class="badge bg-success small">Latest</span>' : ''}
+                                        </div>
+                                        <small class="text-body-secondary">${this.formatDate(version.date)}</small>
+                                    </div>
+                                    <a href="${version.zipball_url}" class="btn btn-outline-image-tea btn-sm" title="Download ${version.name}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                `;
             });
 
-            if (versions.length > 8) {
+            if (versions.length > 5) {
                 html += `
-          <div class="text-center p-3 border-top">
-            <small class="text-body-secondary">
-              +${versions.length - 8} versi lainnya
-            </small>
-          </div>
-        `;
+                                <div class="text-center p-3 border-top bg-body-secondary">
+                                    <small class="text-body-secondary">
+                                        +${versions.length - 5} versi lainnya tersedia
+                                    </small>
+                                </div>
+                `;
             }
 
             html += `
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="${latestInGroup.zipball_url}" class="btn btn-image-tea">
+                                <i class="fas fa-download me-2"></i>Download ${this.formatVersionNumber(latestInGroup.name)}
+                            </a>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <div class="d-grid">
-                <a href="${latestInGroup.zipball_url}" class="btn btn-image-tea">
-                  <i class="fas fa-download me-2"></i>Download ${this.formatVersionNumber(latestInGroup.name)}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+            `;
         });
 
         html += '</div>';
 
+        // Footer section
         html += `
-      <div class="mt-5 pt-4 border-top">
-        <div class="text-center">
-          <p class="text-body-secondary mb-3">
-            Lihat semua versi dan changelog lengkap di GitHub
-          </p>
-          <a href="https://github.com/mudrikam/Image-Tea-mini/tags" target="_blank" class="btn btn-image-tea-outline">
-            <i class="fab fa-github me-2"></i>Lihat di GitHub
-          </a>
-        </div>
-      </div>
-    `;
+            <div class="text-center pt-4 border-top">
+                <p class="text-body-secondary mb-3">
+                    Lihat semua versi dan changelog lengkap di GitHub
+                </p>
+                <a href="https://github.com/mudrikam/Image-Tea-mini/tags" target="_blank" class="btn btn-image-tea-outline btn-lg">
+                    <i class="fab fa-github me-2"></i>Lihat Semua di GitHub
+                </a>
+            </div>
+        `;
 
         container.innerHTML = html;
         loadingState.classList.add('d-none');

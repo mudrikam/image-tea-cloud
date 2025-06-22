@@ -38,7 +38,8 @@
     <body>  <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-image-tea py-2">
             <div class="container">
-                <a class="navbar-brand fw-bold text-white fs-5 py-1" href="https://www.image-tea.cloud/">
+                <a class="navbar-brand fw-bold text-white fs-5 py-1"
+                    href="https://www.image-tea.cloud/">
                     <img
                         src="https://mudrikam.github.io/image-tea-cloud/assets/icon/image_tea_logo_color.webp"
                         alt="Image Tea" class="me-2" style="height: 32px;" /> Image Tea </a>
@@ -49,7 +50,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">                    <ul class="navbar-nav me-auto">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link text-white" href="#download">Download</a>
                         </li>
@@ -106,10 +108,44 @@
                 </div>
             </div>
         </nav>
-
         <b:section id='main' class='main' showaddelement='yes'>
             <b:widget id='Blog1' type='Blog' />
         </b:section>
+
+        <!-- Footer -->
+        <footer class="bg-body-secondary py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <img
+                                src="https://mudrikam.github.io/image-tea-cloud/assets/icon/image_tea_logo_color.webp"
+                                alt="Image Tea" class="me-2" style="height: 24px;"/>
+                            <span class="text-body-secondary">© 2025 Desainia Studio</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <ul
+                            class="list-unstyled d-flex justify-content-md-end justify-content-start gap-3 mb-0">
+                            <li>
+                                <a href="https://www.image-tea.cloud/p/versions.html"
+                                    class="text-body-secondary text-decoration-none">Versions</a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/mudrikam/Image-Tea-mini" target="_blank"
+                                    class="text-body-secondary text-decoration-none">GitHub</a>
+                            </li>
+                            <li>
+                                <a href="https://chat.whatsapp.com/CMQvDxpCfP647kBBA6dRn3"
+                                    target="_blank" class="text-body-secondary text-decoration-none">
+                                    Community</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
         <!-- Bootstrap 5.3 JS Bundle -->
         <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
             integrity='sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL'
