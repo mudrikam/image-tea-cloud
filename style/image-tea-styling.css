@@ -120,13 +120,13 @@ code.text-image-tea {
   font-size: 0.875rem;
 }
 
-/* Background Gradient for Installation Guide */
+/* Background Gradient for Hero Section */
 .bg-gradient-image-tea {
-  background: linear-gradient(to bottom, rgba(83, 161, 27, 0.03) 0%, rgba(83, 161, 27, 0.02) 20%, transparent 40%);
+  background: linear-gradient(180deg, rgba(83, 161, 27, 0.21) 0%, rgba(83, 161, 27, 0) 27%);
   transition: background 0.3s ease;
 }
 
 /* Dark mode support */
 [data-bs-theme="dark"] .bg-gradient-image-tea {
-  background: linear-gradient(to bottom, rgba(83, 161, 27, 0.05) 0%, rgba(83, 161, 27, 0.03) 20%, transparent 40%);
+  background: linear-gradient(180deg, rgba(83, 161, 27, 0.25) 0%, rgba(83, 161, 27, 0) 27%);
 }
