@@ -281,36 +281,26 @@ class VersionManager {
             html += `
                 <div class="row mb-5">
                     <div class="col-12">
-                        <div class="bg-gradient bg-info text-white rounded-4 p-4 shadow-lg">
+                        <div class="bg-info text-white rounded-4 p-4">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <div class="d-flex align-items-start mb-4">
-                                        <div class="bg-white bg-opacity-15 rounded-3 p-3 me-4">
-                                            <i class="fas fa-globe fa-2x"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h3 class="fw-bold mb-2 fs-4">Image Tea Web Version</h3>
-                                            <div class="d-flex align-items-center mb-2">
-                                                <span class="badge bg-light text-info fs-6 px-3 py-2 me-3">${this.formatVersionNumber(this.webVersion.name)}</span>
-                                                ${this.webVersion.date ? `<small class="opacity-75 fw-medium">${this.formatDate(this.webVersion.date)}</small>` : '<small class="opacity-75 fw-medium">Latest Release</small>'}
-                                            </div>
-                                        </div>
+                                    <h3 class="fw-bold mb-3">Image Tea Web Version</h3>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-info fs-6 px-3 py-2">${this.formatVersionNumber(this.webVersion.name)}</span>
+                                        ${this.webVersion.date ? `<div class="mt-2"><small class="opacity-75">${this.formatDate(this.webVersion.date)}</small></div>` : ''}
                                     </div>
-                                    <p class="mb-4 opacity-90 fs-6 lh-base">${this.webVersion.description}</p>
+                                    <p class="mb-4 opacity-90">${this.webVersion.description}</p>
                                     <div class="d-flex flex-wrap gap-3">
-                                        <a href="https://www.image-tea.cloud" class="btn btn-light btn-lg px-4 shadow-sm">
+                                        <a href="https://www.image-tea.cloud" class="btn btn-light btn-lg">
                                             <i class="fas fa-play me-2"></i>Buka Web App
                                         </a>
-                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light btn-lg px-4">
+                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light btn-lg">
                                             <i class="fab fa-github me-2"></i>Lihat di GitHub
                                         </a>
                                     </div>
                                 </div>
                                 <div class="col-md-4 text-center d-none d-md-block">
-                                    <div class="position-relative">
-                                        <i class="fas fa-cloud fa-5x opacity-25 position-absolute top-50 start-50 translate-middle"></i>
-                                        <i class="fas fa-globe-americas fa-3x opacity-75"></i>
-                                    </div>
+                                    <i class="fas fa-cloud fa-4x opacity-50"></i>
                                 </div>
                             </div>
                         </div>

@@ -181,12 +181,12 @@ html:not([data-bs-theme]) .theme-icon-auto,
   display: inline-block;
 }
 
-/* Version Details Hover Effect */
-.bg-body-tertiary {
+/* Version Details Hover Effect - Landing Page Only */
+.landing-page .bg-body-tertiary {
   transition: all 0.3s ease;
 }
 
-.bg-body-tertiary:hover {
+.landing-page .bg-body-tertiary:hover {
   box-shadow: 0 0 20px rgba(83, 161, 27, 0.3);
   transform: translateY(-2px);
 }
