@@ -49,25 +49,20 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
+                <div class="collapse navbar-collapse" id="navbarNav">                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#download">
-                                <i class="fas fa-download me-1"></i>Download </a>
+                            <a class="nav-link text-white" href="#download">Download</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#dokumentasi">
-                                <i class="fas fa-book me-1"></i>Dokumentasi </a>
+                            <a class="nav-link text-white" href="#dokumentasi">Dokumentasi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#daftar-harga">
-                                <i class="fas fa-tag me-1"></i>Daftar Harga </a>
+                            <a class="nav-link text-white" href="#daftar-harga">Daftar Harga</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white"
                                 href="https://chat.whatsapp.com/CMQvDxpCfP647kBBA6dRn3"
-                                target="_blank" rel="noopener">
-                                <i class="fab fa-whatsapp me-1"></i>Grup WhatsApp </a>
+                                target="_blank" rel="noopener">Grup WhatsApp</a>
                         </li>
                     </ul>
                     <div class="navbar-nav d-flex flex-row align-items-center gap-2">

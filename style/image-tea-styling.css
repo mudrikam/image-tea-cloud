@@ -138,7 +138,11 @@ code.text-image-tea {
 }
 
 [data-bs-theme="dark"] .navbar-image-tea {
-  background-color: #3d7914 !important;
+  background-color: #1b2524 !important;
+}
+
+.navbar-image-tea .navbar-brand {
+  color: white !important;
 }
 
 .navbar-image-tea .navbar-nav .nav-link:hover {
