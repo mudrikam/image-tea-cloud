@@ -276,7 +276,9 @@ class VersionManager {
         const majorVersions = Object.keys(this.groupedVersions)
             .map(Number)
             .sort((a, b) => b - a);
-        let html = ''; // Add web version section first
+        let html = '';
+
+        // Add web version section first
         if (this.webVersion) {
             html += `
                 <div class="row mb-5">
@@ -312,7 +314,7 @@ class VersionManager {
                     </div>
                 </div>
             `;
-        }        // Desktop versions section
+        } // Desktop versions section
         if (latestVersion) {
             html += `
                 <div class="row mb-5">
