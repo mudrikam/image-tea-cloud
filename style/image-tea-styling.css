@@ -107,3 +107,15 @@
 .icon-container i {
   color: #53a11b;
 }
+
+/* Versions Page Specific Styling */
+.spinner-border.text-image-tea {
+  color: #53a11b !important;
+}
+
+code.text-image-tea {
+  background-color: rgba(83, 161, 27, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
