@@ -122,11 +122,11 @@ code.text-image-tea {
 
 /* Background Gradient for Hero Section */
 .bg-gradient-image-tea {
-  background: linear-gradient(180deg, rgba(83, 161, 27, 0.21) 0%, rgba(83, 161, 27, 0) 27%);
+  background: linear-gradient(180deg, rgba(83, 161, 27, 0.233) 0%, rgba(83, 161, 27, 0) 27%);
   transition: background 0.3s ease;
 }
 
 /* Dark mode support */
 [data-bs-theme="dark"] .bg-gradient-image-tea {
-  background: linear-gradient(180deg, rgba(83, 161, 27, 0.25) 0%, rgba(83, 161, 27, 0) 27%);
+  background: linear-gradient(180deg, rgba(83, 161, 27, 0.233) 0%, rgba(83, 161, 27, 0) 27%);
 }
