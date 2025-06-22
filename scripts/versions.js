@@ -282,7 +282,7 @@ class VersionManager {
                 <div class="row mb-5">
                     <div class="col-12">
                         <div class="bg-info text-white rounded-4 p-4">
-                            <div class="row align-items-center">
+                            <div class="row align-items-left">
                                 <div class="col-md-8">
                                     <h3 class="fw-bold mb-3">Image Tea Web Version</h3>
                                     <div class="mb-2">
@@ -299,8 +299,11 @@ class VersionManager {
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-md-4 text-center d-none d-md-block">
-                                    <i class="fas fa-cloud fa-4x opacity-50"></i>
+                                <div class="col-md-4 text-right d-none d-md-block">
+                                    <div class="position-relative">
+                                        <i class="fas fa-cloud fa-5x opacity-25 position-absolute top-50 start-50 translate-middle"></i>
+                                        <i class="fas fa-globe-americas fa-3x opacity-75"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
