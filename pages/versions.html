@@ -3,57 +3,60 @@
 <script src="https://mudrikam.github.io/image-tea-cloud/scripts/versions.js"></script>
 
 <div class="text-center py-5">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <!-- Logo -->
-        <div class="mb-4">
-          <img src="https://mudrikam.github.io/image-tea-cloud/assets/icon/image_tea_logo_color.webp" alt="Image Tea" class="mb-3" style="height: 96px;">
-        </div>
-        
-        <!-- Main Heading -->
-        <h1 class="display-4 fw-bold mb-4 text-body-emphasis">
-          Image Tea Versions
-        </h1>
-        
-        <!-- Description -->
-        <p class="lead mb-4">
-          Semua versi Image Tea yang pernah dirilis. Pilih versi yang sesuai dengan kebutuhan kamu.
-        </p>
-        
-        <!-- Loading State -->
-        <div id="loading-state" class="text-center py-5">
-          <div class="spinner-border text-image-tea" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-3 text-body-secondary">Memuat daftar versi...</p>
-        </div>
-          <!-- Error State -->
-        <div id="error-state" class="alert alert-warning d-none">
-          <div class="d-flex">
-            <div class="icon-container d-inline-flex align-items-center justify-content-center me-3 mt-1">
-              <i class="fas fa-exclamation-triangle text-image-tea"></i>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Logo -->
+                <div class="mb-4">
+                    <img src="https://mudrikam.github.io/image-tea-cloud/assets/icon/image_tea_logo_color.webp"
+                        alt="Image Tea" class="mb-3" style="height: 96px;">
+                </div>
+
+                <!-- Main Heading -->
+                <h1 class="display-4 fw-bold mb-4 text-body-emphasis">
+                    Image Tea Versions
+                </h1>
+
+                <!-- Description -->
+                <p class="lead mb-4">
+                    Semua versi Image Tea yang pernah dirilis. Pilih versi yang sesuai dengan kebutuhan kamu.
+                </p>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center py-5">
+                    <div class="spinner-border text-image-tea" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-body-secondary">Memuat daftar versi...</p>
+                </div>
+                <!-- Error State -->
+                <div id="error-state" class="alert alert-warning d-none">
+                    <div class="d-flex">
+                        <div class="icon-container d-inline-flex align-items-center justify-content-center me-3 mt-1">
+                            <i class="fas fa-exclamation-triangle text-image-tea"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">
+                                <strong>Gagal memuat daftar versi.</strong> Silakan coba lagi atau kunjungi langsung
+                                <a href="https://github.com/mudrikam/Image-Tea-mini/tags" target="_blank"
+                                    class="text-image-tea">halaman GitHub</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Versions Container -->
+                <div id="versions-container" class="d-none">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+
+                <!-- Back to Home -->
+                <div class="mt-5">
+                    <a href="../index.html" class="btn btn-image-tea-outline">
+                        <i class="fas fa-arrow-left me-2"></i>Kembali ke Beranda
+                    </a>
+                </div>
             </div>
-            <div>
-              <p class="mb-0">
-                <strong>Gagal memuat daftar versi.</strong> Silakan coba lagi atau kunjungi langsung 
-                <a href="https://github.com/mudrikam/Image-Tea-mini/tags" target="_blank" class="text-image-tea">halaman GitHub</a>.
-              </p>
-            </div>
-          </div>
         </div>
-        
-        <!-- Versions Container -->
-        <div id="versions-container" class="d-none">
-          <!-- Dynamic content will be loaded here -->
-        </div>
-        
-        <!-- Back to Home -->
-        <div class="mt-5">
-          <a href="../index.html" class="btn btn-image-tea-outline">
-            <i class="fas fa-arrow-left me-2"></i>Kembali ke Beranda
-          </a>
-        </div>
-      </div>
-    </div>  </div>
+    </div>
 </div>
