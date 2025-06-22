@@ -100,8 +100,7 @@ class VersionManager {
     this.versions = [];
     this.groupedVersions = {};
   }
-  
-  async fetchVersions() {
+    async fetchVersions() {
     try {
       const response = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/tags?per_page=100');
       if (!response.ok) {
@@ -109,13 +108,43 @@ class VersionManager {
       }
       
       const tags = await response.json();
-      this.versions = tags
-        .map(tag => ({
-          name: tag.name,
-          zipball_url: tag.zipball_url,
-          tarball_url: tag.tarball_url,
-          commit: tag.commit
-        }))
+      
+      // Fetch commit details for each tag to get dates
+      const versionsWithDates = await Promise.all(
+        tags.map(async (tag) => {
+          try {
+            const commitResponse = await fetch(tag.commit.url);
+            if (commitResponse.ok) {
+              const commitData = await commitResponse.json();
+              return {
+                name: tag.name,
+                zipball_url: tag.zipball_url,
+                tarball_url: tag.tarball_url,
+                commit: tag.commit,
+                date: commitData.commit.committer.date
+              };
+            } else {
+              return {
+                name: tag.name,
+                zipball_url: tag.zipball_url,
+                tarball_url: tag.tarball_url,
+                commit: tag.commit,
+                date: null
+              };
+            }
+          } catch (error) {
+            return {
+              name: tag.name,
+              zipball_url: tag.zipball_url,
+              tarball_url: tag.tarball_url,
+              commit: tag.commit,
+              date: null
+            };
+          }
+        })
+      );
+      
+      this.versions = versionsWithDates
         .filter(version => this.isValidVersion(version.name))
         .sort((a, b) => this.compareVersions(b.name, a.name));
       
@@ -170,9 +199,23 @@ class VersionManager {
   getLatestVersion() {
     return this.versions.length > 0 ? this.versions[0] : null;
   }
-  
-  formatVersionNumber(versionName) {
+    formatVersionNumber(versionName) {
     return versionName.startsWith('v') ? versionName : `v${versionName}`;
+  }
+  
+  formatDate(dateString) {
+    if (!dateString) return 'Tanggal tidak tersedia';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Tanggal tidak valid';
+    }
   }
   
   renderVersions() {
@@ -190,15 +233,15 @@ class VersionManager {
       .sort((a, b) => b - a);
     
     let html = '';
-    
-    if (latestVersion) {
+      if (latestVersion) {
       html += `
         <div class="row mb-5">
           <div class="col-12">
             <div class="bg-image-tea text-white rounded-4 p-4 text-center">
               <i class="fas fa-star fa-2x mb-3"></i>
               <h3 class="fw-bold mb-2">Versi Terbaru</h3>
-              <h4 class="mb-3">${this.formatVersionNumber(latestVersion.name)}</h4>
+              <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
+              <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
               <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                 <a href="${latestVersion.zipball_url}" class="btn btn-light btn-lg">
                   <i class="fas fa-download me-2"></i>Download ZIP
@@ -240,13 +283,15 @@ class VersionManager {
               <div class="flex-grow-1 mb-4">
                 <div class="border rounded-3 bg-body">
       `;
-      
-      versions.slice(0, 8).forEach((version, index) => {
+        versions.slice(0, 8).forEach((version, index) => {
         const isFirst = index === 0;
         html += `
           <div class="d-flex align-items-center justify-content-between p-3 ${index > 0 ? 'border-top' : ''}">
             <div class="d-flex align-items-center">
-              <code class="text-image-tea fw-bold">${this.formatVersionNumber(version.name)}</code>
+              <div>
+                <code class="text-image-tea fw-bold d-block">${this.formatVersionNumber(version.name)}</code>
+                <small class="text-body-secondary">${this.formatDate(version.date)}</small>
+              </div>
               ${isFirst ? '<span class="badge bg-success ms-2 small">Latest</span>' : ''}
             </div>
             <div class="btn-group btn-group-sm">
