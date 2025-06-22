@@ -99,9 +99,12 @@ class VersionManager {
     constructor() {
         this.versions = [];
         this.groupedVersions = {};
+        this.webVersion = null;
     }
+
     async fetchVersions() {
         try {
+            // Fetch desktop versions
             const response = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/tags?per_page=100');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -148,12 +151,54 @@ class VersionManager {
                 .filter(version => this.isValidVersion(version.name))
                 .sort((a, b) => this.compareVersions(b.name, a.name));
 
+            // Fetch web version separately
+            await this.fetchWebVersion();
+
             this.groupVersions();
             this.renderVersions();
 
         } catch (error) {
             console.error('Error fetching versions:', error);
             this.showError();
+        }
+    }
+
+    async fetchWebVersion() {
+        try {
+            // Try to get latest release first
+            const releaseResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/releases/latest');
+            if (releaseResponse.ok) {
+                const releaseData = await releaseResponse.json();
+                this.webVersion = {
+                    name: releaseData.tag_name,
+                    date: releaseData.published_at,
+                    description: releaseData.body || 'No release notes available',
+                    url: releaseData.html_url
+                };
+            } else {
+                // Fallback to tags if no releases
+                const tagsResponse = await fetch('https://api.github.com/repos/mudrikam/image-tea-cloud/tags?per_page=1');
+                if (tagsResponse.ok) {
+                    const tagsData = await tagsResponse.json();
+                    if (tagsData.length > 0) {
+                        this.webVersion = {
+                            name: tagsData[0].name,
+                            date: null,
+                            description: 'Latest web version from repository tags',
+                            url: `https://github.com/mudrikam/image-tea-cloud/tree/${tagsData[0].name}`
+                        };
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching web version:', error);
+            // Set fallback web version
+            this.webVersion = {
+                name: 'v2.1.0',
+                date: null,
+                description: 'Current stable web version',
+                url: 'https://github.com/mudrikam/image-tea-cloud'
+            };
         }
     }
 
@@ -231,29 +276,66 @@ class VersionManager {
         const majorVersions = Object.keys(this.groupedVersions)
             .map(Number)
             .sort((a, b) => b - a);
-
         let html = '';
+
+        // Add web version section first
+        if (this.webVersion) {
+            html += `
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="bg-info text-white rounded-4 p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="fas fa-globe fa-2x me-3"></i>
+                                        <div>
+                                            <h3 class="fw-bold mb-1">Image Tea Web Version</h3>
+                                            <h4 class="mb-0">${this.formatVersionNumber(this.webVersion.name)}</h4>
+                                            ${this.webVersion.date ? `<small class="opacity-75">${this.formatDate(this.webVersion.date)}</small>` : ''}
+                                        </div>
+                                    </div>
+                                    <p class="mb-3 opacity-90">${this.webVersion.description}</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="https://www.image-tea.cloud" class="btn btn-light">
+                                            <i class="fas fa-play me-2"></i>Buka Web App
+                                        </a>
+                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light">
+                                            <i class="fab fa-github me-2"></i>Lihat di GitHub
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="fas fa-cloud fa-4x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Desktop versions section
         if (latestVersion) {
             html += `
-        <div class="row mb-5">
-          <div class="col-12">
-            <div class="bg-image-tea text-white rounded-4 p-4 text-center">
-              <i class="fas fa-star fa-2x mb-3"></i>
-              <h3 class="fw-bold mb-2">Versi Terbaru</h3>
-              <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
-              <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
-              <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="${latestVersion.zipball_url}" class="btn btn-light btn-lg">
-                  <i class="fas fa-download me-2"></i>Download ZIP
-                </a>
-                <a href="${latestVersion.tarball_url}" class="btn btn-outline-light btn-lg">
-                  <i class="fas fa-file-archive me-2"></i>Download TAR.GZ
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="bg-image-tea text-white rounded-4 p-4 text-center">
+                            <i class="fas fa-star fa-2x mb-3"></i>
+                            <h3 class="fw-bold mb-2">Desktop Version Terbaru</h3>
+                            <h4 class="mb-2">${this.formatVersionNumber(latestVersion.name)}</h4>
+                            <p class="mb-3 opacity-75">${this.formatDate(latestVersion.date)}</p>
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                                <a href="${latestVersion.zipball_url}" class="btn btn-light btn-lg">
+                                    <i class="fas fa-download me-2"></i>Download ZIP
+                                </a>
+                                <a href="${latestVersion.tarball_url}" class="btn btn-outline-light btn-lg">
+                                    <i class="fas fa-file-archive me-2"></i>Download TAR.GZ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         html += '<div class="row g-4">';
