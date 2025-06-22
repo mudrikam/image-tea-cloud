@@ -23,10 +23,10 @@ class VersionManager {
           commit: tag.commit
         }))
         .filter(version => this.isValidVersion(version.name))
-        .sort((a, b) => this.compareVersions(b.name, a.name)); // Descending order
-      
+        .sort((a, b) => this.compareVersions(b.name, a.name)); // Descending order      
       this.groupVersions();
       this.renderVersions();
+      this.updateLandingPageVersion();
       
     } catch (error) {
       console.error('Error fetching versions:', error);
@@ -82,10 +82,14 @@ class VersionManager {
   formatVersionNumber(versionName) {
     return versionName.startsWith('v') ? versionName : `v${versionName}`;
   }
-  
-  renderVersions() {
+    renderVersions() {
     const container = document.getElementById('versions-container');
     const loadingState = document.getElementById('loading-state');
+    
+    // Only render full versions page if containers exist
+    if (!container || !loadingState) {
+      return;
+    }
     
     if (this.versions.length === 0) {
       this.showError();
@@ -212,6 +216,19 @@ class VersionManager {
     container.innerHTML = html;
     loadingState.classList.add('d-none');
     container.classList.remove('d-none');
+  }
+  
+  updateLandingPageVersion() {
+    const latestVersion = this.getLatestVersion();
+    const versionElement = document.getElementById('desktop-version');
+    if (versionElement && latestVersion) {
+      versionElement.textContent = this.formatVersionNumber(latestVersion.name);
+      versionElement.title = `Latest release: ${latestVersion.name}`;
+    } else if (versionElement) {
+      versionElement.textContent = 'v2.1.0';
+      versionElement.classList.remove('bg-success');
+      versionElement.classList.add('bg-secondary');
+    }
   }
   
   getVersionDescription(majorVersion, count) {
