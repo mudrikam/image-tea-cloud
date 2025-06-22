@@ -1,5 +1,5 @@
 <!-- Image Tea Landing Widget -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mudrikam/image-tea-cloud@latest/style/image-tea-styling.css">
+<link rel="stylesheet" href="https://mudrikam.github.io/image-tea-cloud/style/image-tea-styling.css">
 
 <div class="text-center py-5">
   <div class="container">
@@ -223,9 +223,36 @@
           </div>
         </div>
       </div>
-    </div>  
-</div>
+    </div>
+  </div>
 </div>
 
-<!-- Load version management script -->
-<script src="https://cdn.jsdelivr.net/gh/mudrikam/image-tea-cloud@latest/scripts/versions.js"></script>
+<script>
+// Fetch latest version from GitHub releases
+async function loadLatestVersion() {
+  try {
+    const response = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/releases/latest');
+    if (response.ok) {
+      const data = await response.json();
+      const versionElement = document.getElementById('desktop-version');
+      if (versionElement) {
+        versionElement.textContent = data.tag_name;
+        versionElement.title = `Released: ${new Date(data.published_at).toLocaleDateString()}`;
+      }
+    } else {
+      throw new Error('Failed to fetch version');
+    }
+  } catch (error) {
+    console.error('Error fetching latest version:', error);
+    const versionElement = document.getElementById('desktop-version');
+    if (versionElement) {
+      versionElement.textContent = 'v2.1.0';
+      versionElement.classList.remove('bg-success');
+      versionElement.classList.add('bg-secondary');
+    }
+  }
+}
+
+// Load version when page loads
+document.addEventListener('DOMContentLoaded', loadLatestVersion);
+</script>
