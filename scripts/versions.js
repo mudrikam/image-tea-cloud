@@ -276,35 +276,25 @@ class VersionManager {
         const majorVersions = Object.keys(this.groupedVersions)
             .map(Number)
             .sort((a, b) => b - a);
-        let html = '';        // Add web version section first
+        let html = '';
+
+        // Add web version section first
         if (this.webVersion) {
             html += `
                 <div class="row mb-5">
                     <div class="col-12">
-                        <div class="bg-info text-white rounded-4 p-4">
-                            <div class="row align-items-left">
-                                <div class="col-md-8">
-                                    <h3 class="fw-bold mb-3">Image Tea Web Version</h3>
-                                    <div class="mb-2">
-                                        <span class="badge bg-light text-info fs-6 px-3 py-2">${this.formatVersionNumber(this.webVersion.name)}</span>
-                                        ${this.webVersion.date ? `<div class="mt-2"><small class="opacity-75">${this.formatDate(this.webVersion.date)}</small></div>` : ''}
-                                    </div>
-                                    <p class="mb-4 opacity-90">${this.webVersion.description}</p>
-                                    <div class="d-flex flex-wrap gap-3">
-                                        <a href="https://www.image-tea.cloud" class="btn btn-light btn-lg">
-                                            <i class="fas fa-play me-2"></i>Buka Web App
-                                        </a>
-                                        <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light btn-lg">
-                                            <i class="fab fa-github me-2"></i>Lihat di GitHub
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 text-right d-none d-md-block">
-                                    <div class="position-relative">
-                                        <i class="fas fa-cloud fa-5x opacity-25 position-absolute top-50 start-50 translate-middle"></i>
-                                        <i class="fas fa-globe-americas fa-3x opacity-75"></i>
-                                    </div>
-                                </div>
+                        <div class="bg-info text-white rounded-4 p-4 text-center">
+                            <i class="fas fa-globe fa-2x mb-3"></i>
+                            <h3 class="fw-bold mb-2">Web Version Terbaru</h3>
+                            <h4 class="mb-2">${this.formatVersionNumber(this.webVersion.name)}</h4>
+                            <p class="mb-3 opacity-75">${this.webVersion.date ? this.formatDate(this.webVersion.date) : 'Versi web terkini'}</p>
+                            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                                <a href="https://www.image-tea.cloud" class="btn btn-light btn-lg">
+                                    <i class="fas fa-play me-2"></i>Buka Web App
+                                </a>
+                                <a href="${this.webVersion.url}" target="_blank" class="btn btn-outline-light btn-lg">
+                                    <i class="fab fa-github me-2"></i>Lihat di GitHub
+                                </a>
                             </div>
                         </div>
                     </div>
