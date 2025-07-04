@@ -122,12 +122,16 @@ class ImageConverter {
             try {
                 if (file.type === 'application/pdf') {
                     await this.processPDF(file);
+                    // Wait a bit for PDF processing to complete
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 } else {
                     const imageData = await this.processFile(file);
                     this.images.push(imageData);
                 }
             } catch (error) {
                 console.error('Error processing file:', file.name, error);
+                // Show user-friendly error message
+                alert(`Error memproses file ${file.name}: ${error.message}`);
             }
         }
 
@@ -138,16 +142,82 @@ class ImageConverter {
     }
 
     async processPDF(file) {
-        // For PDF processing, we'll store the file path and create a placeholder
-        // In a real implementation, you'd use PDF.js or similar library
+        try {
+            // Check if pdf-image library is available
+            if (typeof PDFImage === 'undefined') {
+                console.warn('PDF-image library not loaded, using placeholder');
+                return this.createPDFPlaceholder(file);
+            }
+
+            // Convert PDF to images using pdf-image library
+            const arrayBuffer = await file.arrayBuffer();
+            const images = await PDFImage.convert(arrayBuffer, {
+                scale: 1.5,
+                format: 'png'
+            });
+
+            // Check if conversion was successful
+            if (!images || images.length === 0) {
+                console.warn('PDF conversion failed, using placeholder');
+                return this.createPDFPlaceholder(file);
+            }
+
+            // Process each page as a separate image
+            for (let index = 0; index < images.length; index++) {
+                const imageData = images[index];
+                const img = new Image();
+                
+                await new Promise((resolve, reject) => {
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const pdfPageData = {
+                            id: Date.now() + Math.random() + index,
+                            name: `${file.name.replace('.pdf', '')}_page_${index + 1}.png`,
+                            originalName: file.name,
+                            size: Math.floor(file.size / images.length),
+                            type: 'image/png',
+                            width: img.width,
+                            height: img.height,
+                            filePath: canvas.toDataURL('image/png'),
+                            thumbnail: this.createThumbnail(canvas),
+                            uploadDate: new Date().toISOString(),
+                            isPDF: true,
+                            pageNumber: index + 1
+                        };
+                        this.images.push(pdfPageData);
+                        resolve();
+                    };
+                    
+                    img.onerror = () => {
+                        console.warn(`Failed to load PDF page ${index + 1}`);
+                        reject(new Error(`Failed to load PDF page ${index + 1}`));
+                    };
+                    
+                    img.src = imageData;
+                });
+            }
+
+        } catch (error) {
+            console.error('Error processing PDF:', error);
+            // Fallback to placeholder if PDF processing fails
+            return this.createPDFPlaceholder(file);
+        }
+    }
+
+    createPDFPlaceholder(file) {
         const imageData = {
             id: Date.now() + Math.random(),
             name: file.name,
             originalName: file.name,
             size: file.size,
             type: 'application/pdf',
-            width: 595, // A4 width in points
-            height: 842, // A4 height in points
+            width: 595,
+            height: 842,
             filePath: URL.createObjectURL(file),
             thumbnail: this.createPDFThumbnail(),
             uploadDate: new Date().toISOString(),
@@ -272,13 +342,14 @@ class ImageConverter {
                             <div class="position-absolute top-0 start-0 m-2">
                                 <input type="checkbox" class="form-check-input" 
                                        ${isSelected ? 'checked' : ''}
-                                       onchange="imageConverter.toggleSelection('${img.id}', this.checked)">
+                                       data-image-id="${img.id}">
                             </div>
                             <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
                                     onclick="imageConverter.removeImage('${img.id}')">
                                 <i class="fas fa-times"></i>
                             </button>
-                            ${img.isPDF ? '<div class="position-absolute bottom-0 start-0 m-2"><span class="badge bg-danger">PDF</span></div>' : ''}
+                            ${img.isPDF && img.pageNumber ? `<div class="position-absolute bottom-0 start-0 m-2"><span class="badge bg-danger">PDF Page ${img.pageNumber}</span></div>` : 
+                              img.isPDF ? '<div class="position-absolute bottom-0 start-0 m-2"><span class="badge bg-danger">PDF</span></div>' : ''}
                         </div>
                         <div class="card-body d-flex flex-column p-3">
                             <h6 class="card-title text-truncate mb-2" title="${img.name}">${img.name}</h6>
@@ -303,6 +374,14 @@ class ImageConverter {
                 </div>
             `;
         }).join('');
+        
+        // Add event listeners for checkboxes
+        container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const imageId = e.target.getAttribute('data-image-id');
+                this.handleCheckboxChange(imageId, e.target.checked);
+            });
+        });
     }
 
     renderPagination(totalPages) {
@@ -399,6 +478,8 @@ class ImageConverter {
     }
 
     updateEstimates() {
+        // Re-render images when estimates need to be updated
+        // This ensures estimates reflect current settings
         this.renderImages();
     }
 
@@ -409,7 +490,7 @@ class ImageConverter {
             this.selectedImages.delete(imageId);
         }
         this.updateCounts();
-        this.renderImages();
+        // Don't re-render images to avoid resetting checkboxes
     }
 
     selectAll() {
@@ -418,13 +499,47 @@ class ImageConverter {
         );
         filteredImages.forEach(img => this.selectedImages.add(img.id));
         this.updateCounts();
-        this.renderImages();
+        // Update checkboxes manually without re-rendering
+        this.updateCheckboxes();
     }
 
     deselectAll() {
         this.selectedImages.clear();
         this.updateCounts();
-        this.renderImages();
+        // Update checkboxes manually without re-rendering
+        this.updateCheckboxes();
+    }
+
+    updateCheckboxes() {
+        // Use the new method to update display
+        this.updateSelectionDisplay();
+    }
+
+    handleCheckboxChange(imageId, checked) {
+        // Handle individual checkbox changes without re-rendering
+        if (checked) {
+            this.selectedImages.add(imageId);
+        } else {
+            this.selectedImages.delete(imageId);
+        }
+        this.updateCounts();
+        
+        // Update visual feedback if needed (but avoid full re-render)
+        this.updateSelectionDisplay();
+    }
+
+    updateSelectionDisplay() {
+        // Update any visual indicators without full re-render
+        const container = document.getElementById('images-container');
+        container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            const imageId = checkbox.getAttribute('data-image-id');
+            const isSelected = this.selectedImages.has(imageId);
+            
+            // Ensure checkbox state matches internal state
+            if (checkbox.checked !== isSelected) {
+                checkbox.checked = isSelected;
+            }
+        });
     }
 
     updateCounts() {
@@ -541,8 +656,9 @@ class ImageConverter {
         const image = this.images.find(img => img.id == imageId);
         if (!image) return;
 
-        if (image.isPDF) {
-            alert('Konversi PDF memerlukan library tambahan. Fitur akan ditambahkan pada versi mendatang.');
+        // Handle PDF conversion - PDF pages are already converted to images
+        if (image.isPDF && image.type === 'application/pdf') {
+            alert('PDF ini belum dikonversi ke gambar. Silakan upload ulang PDF untuk konversi otomatis.');
             return;
         }
 

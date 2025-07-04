@@ -97,7 +97,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <!-- Bulk Actions -->
                                 <div class="d-flex gap-2">
                                     <button id="convert-all-btn" class="btn btn-image-tea">
@@ -106,14 +106,14 @@
                                     <button id="select-all-btn" class="btn btn-outline-secondary">
                                         <i class="fas fa-check-square me-1"></i>Pilih Semua
                                     </button>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="d-flex gap-2 justify-content-end">
                                     <button id="deselect-all-btn" class="btn btn-outline-secondary">
                                         <i class="fas fa-square me-1"></i>Batal Pilih
                                     </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex gap-2 justify-content-end">
                                     <button id="clear-all-btn" class="btn btn-outline-danger">
                                         <i class="fas fa-trash me-1"></i>Hapus Semua
                                     </button>
@@ -139,7 +139,8 @@
                                 <i class="fas fa-folder-open me-2"></i>Pilih File
                             </button>
                             <p class="small text-body-secondary mt-3 mb-0">
-                                Format yang didukung: PNG, JPEG, JPG, WebP, AVIF, PDF
+                                Format yang didukung: PNG, JPEG, JPG, WebP, AVIF, PDF<br>
+                                <small class="text-muted">PDF akan otomatis dikonversi menjadi gambar per halaman</small>
                             </p>
                         </div>
                     </div>
@@ -225,4 +226,5 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-image@2.0.0/index.min.js"></script>
 <script src="../scripts/image-converter.js"></script>
