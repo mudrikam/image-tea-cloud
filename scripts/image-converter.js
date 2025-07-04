@@ -212,25 +212,8 @@ class ImageConverter {
     }
 
     createThumbnail(canvas) {
-        const thumbnailCanvas = document.createElement('canvas');
-        const ctx = thumbnailCanvas.getContext('2d');
-        
-        const maxSize = 150;
-        const ratio = Math.min(maxSize / canvas.width, maxSize / canvas.height);
-        
-        thumbnailCanvas.width = maxSize;
-        thumbnailCanvas.height = maxSize;
-        
-        const scaledWidth = canvas.width * ratio;
-        const scaledHeight = canvas.height * ratio;
-        const offsetX = (maxSize - scaledWidth) / 2;
-        const offsetY = (maxSize - scaledHeight) / 2;
-        
-        ctx.fillStyle = '#f8f9fa';
-        ctx.fillRect(0, 0, maxSize, maxSize);
-        ctx.drawImage(canvas, offsetX, offsetY, scaledWidth, scaledHeight);
-        
-        return thumbnailCanvas.toDataURL('image/jpeg', 0.8);
+        // Return the file path instead of converting to thumbnail
+        return canvas.toDataURL('image/jpeg', 0.3);
     }
 
     renderImages() {
@@ -281,12 +264,10 @@ class ImageConverter {
             
             return `
                 <div class="col-md-6 col-lg-4 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 ${isSelected ? 'border-success' : ''}">
+                    <div class="card border-0 shadow-sm h-100 ${isSelected ? 'selected' : ''}">
                         <div class="position-relative">
-                            <div class="d-flex align-items-center justify-content-center" 
-                                 style="height: 150px; background-color: #f8f9fa; border-radius: 0.375rem 0.375rem 0 0;">
-                                <img src="${img.thumbnail}" class="img-fluid" 
-                                     style="max-height: 148px; max-width: 100%; object-fit: contain;" alt="${img.name}">
+                            <div class="thumbnail-container">
+                                <img src="${img.filePath}" class="img-fluid" alt="${img.name}">
                             </div>
                             <div class="position-absolute top-0 start-0 m-2">
                                 <input type="checkbox" class="form-check-input" 
@@ -457,30 +438,103 @@ class ImageConverter {
             return;
         }
 
-        // This would require JSZip library in a real implementation
-        alert(`Fitur ZIP akan mengkonversi ${this.selectedImages.size} gambar yang dipilih. Implementasi memerlukan library JSZip.`);
+        const selectedImageData = this.images.filter(img => this.selectedImages.has(img.id));
+        
+        if (typeof JSZip === 'undefined') {
+            alert('Library JSZip tidak tersedia. Silakan muat ulang halaman.');
+            return;
+        }
+
+        const zip = new JSZip();
+        this.showProgress();
+        
+        for (let i = 0; i < selectedImageData.length; i++) {
+            const image = selectedImageData[i];
+            const progress = ((i + 1) / selectedImageData.length) * 100;
+            this.updateProgress(progress, `Memproses ${image.name}...`);
+
+            try {
+                const convertedBlob = await this.convertImageToBlob(image);
+                const format = document.getElementById('format-select').value;
+                const extension = format === 'jpeg' ? 'jpg' : format;
+                const baseName = image.originalName.replace(/\.[^/.]+$/, '');
+                const fileName = `${baseName}_converted.${extension}`;
+                
+                zip.file(fileName, convertedBlob);
+            } catch (error) {
+                console.error('Error converting image:', image.name, error);
+            }
+        }
+
+        this.updateProgress(90, 'Membuat file ZIP...');
+        
+        try {
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(zipBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `converted_images_${new Date().toISOString().split('T')[0]}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            this.updateProgress(100, 'Selesai!');
+            setTimeout(() => this.hideProgress(), 1000);
+        } catch (error) {
+            console.error('Error creating ZIP:', error);
+            alert('Gagal membuat file ZIP');
+            this.hideProgress();
+        }
+    }
+
+    async convertImageToBlob(image) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                const format = document.getElementById('format-select').value;
+                const quality = parseInt(document.getElementById('quality-slider').value) / 100;
+                const resizeOption = document.getElementById('resize-select').value;
+                const cropOption = document.getElementById('crop-select').value;
+
+                let { width, height } = this.calculateDimensions(img.width, img.height, resizeOption, cropOption);
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                if (cropOption) {
+                    this.applyCrop(ctx, img, cropOption, width, height);
+                } else {
+                    ctx.drawImage(img, 0, 0, width, height);
+                }
+
+                const mimeType = format === 'png' ? 'image/png' : 
+                                format === 'jpeg' ? 'image/jpeg' :
+                                format === 'webp' ? 'image/webp' :
+                                'image/avif';
+
+                canvas.toBlob(resolve, mimeType, format === 'png' ? undefined : quality);
+            };
+            img.onerror = reject;
+            img.src = image.filePath;
+        });
     }
 
     previewImage(imageId) {
         const image = this.images.find(img => img.id == imageId);
         if (!image) return;
 
-        // Open image in new window/tab for preview
-        if (image.isPDF) {
-            window.open(image.filePath, '_blank');
-        } else {
-            const img = new Image();
-            img.src = image.filePath;
-            const newWindow = window.open('', '_blank');
-            newWindow.document.write(`
-                <html>
-                    <head><title>Preview - ${image.name}</title></head>
-                    <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center; min-height:100vh;">
-                        <img src="${image.filePath}" style="max-width:100%; max-height:100vh; object-fit:contain;">
-                    </body>
-                </html>
-            `);
-        }
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        const previewImg = document.getElementById('preview-image');
+        const modalTitle = document.getElementById('previewModalLabel');
+        
+        modalTitle.textContent = `Preview - ${image.name}`;
+        previewImg.src = image.filePath;
+        
+        modal.show();
     }
 
     async convertImage(imageId) {
@@ -708,7 +762,6 @@ class ImageConverter {
                 width: img.width,
                 height: img.height,
                 filePath: img.filePath,
-                thumbnail: img.thumbnail,
                 uploadDate: img.uploadDate,
                 isPDF: img.isPDF || false
             }));

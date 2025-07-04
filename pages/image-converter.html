@@ -95,17 +95,25 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <!-- Bulk Actions -->
                                 <div class="d-flex gap-2">
-                                    <button id="convert-all-btn" class="btn btn-image-tea flex-fill">
+                                    <button id="convert-all-btn" class="btn btn-image-tea">
                                         <i class="fas fa-download me-2"></i>Konversi & Unduh Semua (ZIP)
                                     </button>
                                     <button id="select-all-btn" class="btn btn-outline-secondary">
                                         <i class="fas fa-check-square me-1"></i>Pilih Semua
                                     </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="d-flex gap-2 justify-content-end">
                                     <button id="deselect-all-btn" class="btn btn-outline-secondary">
                                         <i class="fas fa-square me-1"></i>Batal Pilih
+                                    </button>
+                                    <button id="clear-all-btn" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash me-1"></i>Hapus Semua
                                     </button>
                                 </div>
                             </div>
@@ -205,3 +213,21 @@
         </div>
     </div>
 </div>
+
+<!-- Preview Modal -->
+<div class="modal fade preview-modal" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Preview Gambar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img id="preview-image" src="" alt="Preview" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="../scripts/image-converter.js"></script>
