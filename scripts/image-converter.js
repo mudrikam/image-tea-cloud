@@ -193,7 +193,7 @@ class ImageConverter {
                         width: viewport.width,
                         height: viewport.height,
                         filePath: canvas.toDataURL('image/png'),
-                        thumbnail: this.createThumbnail(canvas),
+                        thumbnail: canvas.toDataURL('image/png'), // Use same data for thumbnail
                         uploadDate: new Date().toISOString(),
                         isPDF: true,
                         pageNumber: pageNum
@@ -227,20 +227,24 @@ class ImageConverter {
     }
 
     createPDFPlaceholder(file) {
-        const imageData = {
-            id: Date.now() + Math.random(),
-            name: file.name,
-            originalName: file.name,
-            size: file.size,
-            type: 'application/pdf',
-            width: 595,
-            height: 842,
-            filePath: URL.createObjectURL(file),
-            thumbnail: this.createPDFThumbnail(),
-            uploadDate: new Date().toISOString(),
-            isPDF: true
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imageData = {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                originalName: file.name,
+                size: file.size,
+                type: 'application/pdf',
+                width: 595,
+                height: 842,
+                filePath: this.createPDFThumbnail(),
+                thumbnail: this.createPDFThumbnail(),
+                uploadDate: new Date().toISOString(),
+                isPDF: true
+            };
+            this.images.push(imageData);
         };
-        this.images.push(imageData);
+        reader.readAsDataURL(file);
     }
 
     createPDFThumbnail() {
@@ -269,15 +273,6 @@ class ImageConverter {
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-
-                    const thumbnail = this.createThumbnail(canvas);
-
                     resolve({
                         id: Date.now() + Math.random(),
                         name: file.name,
@@ -286,8 +281,8 @@ class ImageConverter {
                         type: file.type,
                         width: img.width,
                         height: img.height,
-                        filePath: URL.createObjectURL(file),
-                        thumbnail: thumbnail,
+                        filePath: e.target.result, // Use data URL for consistent access
+                        thumbnail: e.target.result, // Use same data URL for thumbnail
                         uploadDate: new Date().toISOString(),
                         isPDF: false
                     });
@@ -296,11 +291,6 @@ class ImageConverter {
             };
             reader.readAsDataURL(file);
         });
-    }
-
-    createThumbnail(canvas) {
-        // Return the file path instead of converting to thumbnail
-        return canvas.toDataURL('image/jpeg', 0.3);
     }
 
     renderImages() {
@@ -354,7 +344,7 @@ class ImageConverter {
                     <div class="card border-0 shadow-sm h-100">
                         <div class="position-relative">
                             <div class="thumbnail-container">
-                                <img src="${img.filePath}" class="img-fluid" alt="${img.name}">
+                                <img src="${img.thumbnail || img.filePath}" class="img-fluid" alt="${img.name}">
                             </div>
                             <div class="position-absolute top-0 start-0 m-2">
                                 <input type="checkbox" class="form-check-input" 
@@ -901,6 +891,7 @@ class ImageConverter {
 
     saveToStorage() {
         try {
+            // Only save essential metadata, not the actual image data
             const essentialData = this.images.map(img => ({
                 id: img.id,
                 name: img.name,
@@ -909,9 +900,10 @@ class ImageConverter {
                 type: img.type,
                 width: img.width,
                 height: img.height,
-                filePath: img.filePath,
                 uploadDate: img.uploadDate,
-                isPDF: img.isPDF || false
+                isPDF: img.isPDF || false,
+                pageNumber: img.pageNumber || null
+                // Don't save filePath and thumbnail - they contain large base64 data
             }));
             localStorage.setItem('imageConverter_images', JSON.stringify(essentialData));
         } catch (error) {
@@ -922,7 +914,13 @@ class ImageConverter {
     loadFromStorage() {
         try {
             const stored = localStorage.getItem('imageConverter_images');
-            return stored ? JSON.parse(stored) : [];
+            if (stored) {
+                const parsedData = JSON.parse(stored);
+                // Return empty array since we can't restore image data after refresh
+                // Users will need to re-upload their images
+                return [];
+            }
+            return [];
         } catch (error) {
             console.warn('Failed to load from localStorage:', error);
             return [];
