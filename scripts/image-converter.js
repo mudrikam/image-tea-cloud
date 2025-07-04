@@ -264,7 +264,7 @@ class ImageConverter {
             
             return `
                 <div class="col-md-6 col-lg-4 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 ${isSelected ? 'selected' : ''}">
+                    <div class="card border-0 shadow-sm h-100">
                         <div class="position-relative">
                             <div class="thumbnail-container">
                                 <img src="${img.filePath}" class="img-fluid" alt="${img.name}">
