@@ -1,130 +1,246 @@
 <!-- Image Tea Services Widget -->
-<div class="py-4 services-page">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <!-- Header Controls -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div class="d-flex align-items-center">
-            <label for="model-select" class="form-label me-3 mb-0 fw-semibold text-body-emphasis">Model:</label>
-            <select class="form-select" id="model-select" style="width: auto; min-width: 200px;">
-              <option value="gemini">Gemini API</option>
-              <option value="openai">OpenAI API</option>
-            </select>
-          </div>
-          
-          <button class="btn btn-image-tea-outline" id="settings-btn" data-bs-toggle="modal" data-bs-target="#settingsModal">
-            <i class="fas fa-cog me-2"></i>Settings
-          </button>
-        </div>
+<div class="services-page" style="min-height: 100vh; display: flex; flex-direction: column;">
+    <div class="container flex-grow-1 d-flex flex-column py-4">
+        <div class="row flex-grow-1">
+            <div class="col-12 d-flex flex-column">
+                <!-- Header Controls -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center">
+                        <label for="model-select"
+                            class="form-label me-3 mb-0 fw-semibold text-body-emphasis">Model:</label>
+                        <select class="form-select" id="model-select" style="width: auto; min-width: 200px;">
+                            <option value="gemini">Gemini API</option>
+                            <option value="openai">OpenAI API</option>
+                        </select>
+                    </div>
 
-        <!-- Main Service Area -->
-        <div class="card border-0 shadow-sm">
-          <div class="card-body p-5">
-            <div class="text-center py-5">
-              <div class="icon-container mx-auto mb-4">
-                <i class="fas fa-robot fa-2x"></i>
-              </div>
-              <h3 class="text-body-emphasis mb-3">Image Tea Services</h3>
-              <p class="text-body-secondary lead mb-4">
-                Generator metadata AI-powered dengan Gemini dan OpenAI
-              </p>
-              <p class="text-body-secondary">
-                Pilih model AI di atas untuk memulai menggunakan layanan Image Tea.<br>
-                Pastikan Anda sudah mengatur API key melalui tombol Settings.
-              </p>
+                    <button class="btn btn-image-tea-outline" id="settings-btn" data-bs-toggle="modal"
+                        data-bs-target="#settingsModal">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </button>
+                </div>
+
+                <!-- Main Service Area -->
+                <div class="card border-0 shadow-sm mb-5">
+                    <div class="card-body p-5 d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                <i class="fas fa-robot fa-lg text-image-tea"></i>
+                            </div>
+                            <h3 class="text-body-emphasis mb-3">Image Tea Services</h3>
+                            <p class="text-body-secondary lead mb-4">
+                                Generator metadata AI-powered dengan Gemini dan OpenAI
+                            </p>
+                            <p class="text-body-secondary">
+                                Pilih model AI di atas untuk memulai menggunakan layanan Image Tea.<br>
+                                Pastikan Kamu sudah mengatur API key melalui tombol Settings.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Services Section -->
+                <div class="mb-4">
+                    <h4 class="text-body-emphasis mb-4 text-center">Layanan Lainnya</h4>
+                    <div class="row g-4">
+                        <!-- Image Converter Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-exchange-alt fa-lg text-info"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">Image Converter</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Konversi format gambar dengan mudah. Mendukung JPG, PNG, WebP, dan format lainnya.
+                                    </p>
+                                    <button class="btn btn-info" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Microstock Assistance Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-chart-line fa-lg text-success"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">Microstock Assistance</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Bantuan optimasi gambar untuk platform microstock seperti Shutterstock dan Getty Images.
+                                    </p>
+                                    <button class="btn btn-success" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Batch Processing Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-tasks fa-lg text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">Batch Processing</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Proses banyak gambar sekaligus dengan fitur batch untuk efisiensi maksimal.
+                                    </p>
+                                    <button class="btn btn-warning" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEO Optimizer Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-search fa-lg text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">SEO Optimizer</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Optimasi metadata gambar untuk SEO dengan keyword analysis dan suggestion.
+                                    </p>
+                                    <button class="btn btn-primary" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Compressor Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-compress fa-lg text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">Image Compressor</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Kompres ukuran file gambar tanpa mengurangi kualitas visual secara signifikan.
+                                    </p>
+                                    <button class="btn btn-danger" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Watermark Tool Card -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-container d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-shield-alt fa-lg text-secondary"></i>
+                                    </div>
+                                    <h5 class="card-title text-body-emphasis mb-3">Watermark Tool</h5>
+                                    <p class="card-text text-body-secondary mb-4">
+                                        Tambahkan watermark pada gambar untuk melindungi hak cipta dan branding.
+                                    </p>
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="fas fa-clock me-2"></i>Coming Soon
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="settingsModalLabel">
-          <i class="fas fa-cog me-2"></i>Pengaturan
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Empty - ready for new content -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-danger" id="clear-btn">
-          <i class="fas fa-trash me-2"></i>Clear
-        </button>
-        <div class="ms-auto d-flex gap-2">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-2"></i>Tutup
-          </button>
-          <button type="button" class="btn btn-image-tea" id="save-btn">
-            <i class="fas fa-save me-2"></i>Simpan
-          </button>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">
+                    <i class="fas fa-cog me-2"></i>Pengaturan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Empty - ready for new content -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" id="clear-btn">
+                    <i class="fas fa-trash me-2"></i>Clear
+                </button>
+                <div class="ms-auto d-flex gap-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Tutup
+                    </button>
+                    <button type="button" class="btn btn-image-tea" id="save-btn">
+                        <i class="fas fa-save me-2"></i>Simpan
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <script>
-// Model Selection Handler
-document.getElementById('model-select').addEventListener('change', function() {
-  const selectedModel = this.value;
-  console.log('Selected model:', selectedModel);
-});
+    // Model Selection Handler
+    document.getElementById('model-select').addEventListener('change', function () {
+        const selectedModel = this.value;
+        console.log('Selected model:', selectedModel);
+    });
 
-// Settings Button Handler
-document.getElementById('settings-btn').addEventListener('click', function() {
-  console.log('Settings button clicked');
-});
+    // Settings Button Handler
+    document.getElementById('settings-btn').addEventListener('click', function () {
+        console.log('Settings button clicked');
+    });
 
-// Save Button Handler
-document.getElementById('save-btn').addEventListener('click', function() {
-  const btn = this;
-  const originalText = btn.innerHTML;
-  
-  btn.innerHTML = '<i class="fas fa-check me-2"></i>Tersimpan!';
-  btn.classList.remove('btn-image-tea');
-  btn.classList.add('btn-success');
-  btn.disabled = true;
-  
-  setTimeout(() => {
-    btn.innerHTML = originalText;
-    btn.classList.remove('btn-success');
-    btn.classList.add('btn-image-tea');
-    btn.disabled = false;
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
-    modal.hide();
-  }, 1500);
-  
-  console.log('Settings saved');
-});
+    // Save Button Handler
+    document.getElementById('save-btn').addEventListener('click', function () {
+        const btn = this;
+        const originalText = btn.innerHTML;
 
-// Clear Button Handler
-document.getElementById('clear-btn').addEventListener('click', function() {
-  if (confirm('Apakah Anda yakin ingin menghapus semua pengaturan?')) {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    
-    btn.innerHTML = '<i class="fas fa-check me-2"></i>Terhapus!';
-    btn.classList.remove('btn-outline-danger');
-    btn.classList.add('btn-success');
-    btn.disabled = true;
-    
-    setTimeout(() => {
-      btn.innerHTML = originalText;
-      btn.classList.remove('btn-success');
-      btn.classList.add('btn-outline-danger');
-      btn.disabled = false;
-    }, 1500);
-    
-    console.log('Settings cleared');
-  }
-});
+        btn.innerHTML = '<i class="fas fa-check me-2"></i>Tersimpan!';
+        btn.classList.remove('btn-image-tea');
+        btn.classList.add('btn-success');
+        btn.disabled = true;
+
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-image-tea');
+            btn.disabled = false;
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+            modal.hide();
+        }, 1500);
+
+        console.log('Settings saved');
+    });
+
+    // Clear Button Handler
+    document.getElementById('clear-btn').addEventListener('click', function () {
+        if (confirm('Apakah Anda yakin ingin menghapus semua pengaturan?')) {
+            const btn = this;
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Terhapus!';
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-success');
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-danger');
+                btn.disabled = false;
+            }, 1500);
+
+            console.log('Settings cleared');
+        }
+    });
 </script>

@@ -168,5 +168,6 @@
         <!-- Image Tea Template Scripts -->
         <script src='https://mudrikam.github.io/image-tea-cloud/scripts/template.js'></script>
         <script src="https://mudrikam.github.io/image-tea-cloud/scripts/versions.js"></script>
+        <script src="https://mudrikam.github.io/image-tea-cloud/scripts/image-converter.js"></script>
     </body>
 </html>
