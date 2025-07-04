@@ -1,0 +1,207 @@
+<!-- Image Tea Image Converter -->
+<div class="image-converter-page" style="min-height: 100vh; display: flex; flex-direction: column;">
+    <div class="container flex-grow-1 d-flex flex-column py-4">
+        <div class="row flex-grow-1">
+            <div class="col-12 d-flex flex-column">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <h1 class="h2 fw-bold text-body-emphasis mb-2">
+                        <i class="fas fa-exchange-alt text-image-tea me-2"></i>
+                        Konversi Gambar
+                    </h1>
+                    <p class="text-body-secondary">Konversi gambar ke berbagai format dengan mudah</p>
+                </div>
+
+                <!-- Controls Panel -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end mb-3">
+                            <!-- Format Selection -->
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Format Target</label>
+                                <select id="format-select" class="form-select">
+                                    <option value="png">PNG</option>
+                                    <option value="jpeg">JPEG</option>
+                                    <option value="webp">WebP</option>
+                                    <option value="avif">AVIF</option>
+                                </select>
+                            </div>
+
+                            <!-- Quality Slider -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">
+                                    Kualitas: <span id="quality-value">80</span>%
+                                </label>
+                                <input type="range" id="quality-slider" class="form-range" min="10" max="100" value="80">
+                            </div>
+
+                            <!-- Resize Options -->
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Resize ke</label>
+                                <select id="resize-select" class="form-select">
+                                    <option value="">Tidak Resize</option>
+                                    <option value="25">25%</option>
+                                    <option value="50">50%</option>
+                                    <option value="75">75%</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Size (Hidden by default) -->
+                            <div class="col-md-2 d-none" id="custom-size-container">
+                                <label class="form-label fw-bold">Lebar (px)</label>
+                                <input type="number" id="custom-width" class="form-control" placeholder="800">
+                            </div>
+
+                            <!-- Search -->
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Cari Gambar</label>
+                                <input type="text" id="search-input" class="form-control" placeholder="Nama file...">
+                            </div>
+
+                            <!-- Clear Button -->
+                            <div class="col-md-1">
+                                <button id="clear-all-btn" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Crop Presets -->
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Crop Preset</label>
+                                <select id="crop-select" class="form-select">
+                                    <option value="">No Crop</option>
+                                    <optgroup label="Social Media">
+                                        <option value="1:1">Instagram Square (1:1)</option>
+                                        <option value="4:5">Instagram Portrait (4:5)</option>
+                                        <option value="16:9">Facebook Cover (16:9)</option>
+                                        <option value="1200:630">Facebook Post (1200:630)</option>
+                                        <option value="1080:1920">Instagram Story (9:16)</option>
+                                    </optgroup>
+                                    <optgroup label="Print Size">
+                                        <option value="a4">A4 (210x297mm)</option>
+                                        <option value="a3">A3 (297x420mm)</option>
+                                        <option value="letter">Letter (8.5x11 inch)</option>
+                                        <option value="business">Business Card (3.5x2 inch)</option>
+                                        <option value="postcard">Postcard (6x4 inch)</option>
+                                    </optgroup>
+                                    <optgroup label="Screen Size">
+                                        <option value="1920:1080">Full HD (1920x1080)</option>
+                                        <option value="1366:768">HD Ready (1366x768)</option>
+                                        <option value="1280:720">HD (1280x720)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Bulk Actions -->
+                                <div class="d-flex gap-2">
+                                    <button id="convert-all-btn" class="btn btn-image-tea flex-fill">
+                                        <i class="fas fa-download me-2"></i>Konversi & Unduh Semua (ZIP)
+                                    </button>
+                                    <button id="select-all-btn" class="btn btn-outline-secondary">
+                                        <i class="fas fa-check-square me-1"></i>Pilih Semua
+                                    </button>
+                                    <button id="deselect-all-btn" class="btn btn-outline-secondary">
+                                        <i class="fas fa-square me-1"></i>Batal Pilih
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 text-end">
+                                <small class="text-body-secondary">
+                                    Total: <span id="total-images">0</span> gambar | 
+                                    Dipilih: <span id="selected-count">0</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Area -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div id="drop-zone" class="border-2 border-dashed rounded p-5 text-center" 
+                             style="border-color: #53a11b !important; background-color: rgba(83, 161, 27, 0.05);">
+                            <div class="icon-container mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+                                 style="width: 64px; height: 64px;">
+                                <i class="fas fa-cloud-upload-alt text-image-tea" style="font-size: 2rem;"></i>
+                            </div>
+                            <h5 class="fw-bold text-body-emphasis mb-2">Tarik & Lepas Gambar di Sini</h5>
+                            <p class="text-body-secondary mb-3">atau klik untuk memilih file</p>
+                            <input type="file" id="file-input" multiple accept="image/*,.pdf" class="d-none">
+                            <button id="browse-btn" class="btn btn-image-tea">
+                                <i class="fas fa-folder-open me-2"></i>Pilih File
+                            </button>
+                            <p class="small text-body-secondary mt-3 mb-0">
+                                Format yang didukung: PNG, JPEG, JPG, WebP, AVIF, PDF
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="progress-container" class="mb-4 d-none">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold">Progress Konversi</span>
+                                <span id="progress-text">0%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div id="progress-bar" class="progress-bar bg-image-tea" 
+                                     role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images Grid -->
+                <div class="flex-grow-1">
+                    <div id="images-container" class="row g-3">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="d-flex justify-content-center mt-4 d-none">
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item" id="prev-page">
+                                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                                </li>
+                                <div id="page-numbers" class="d-flex">
+                                    <!-- Page numbers will be generated here -->
+                                </div>
+                                <li class="page-item" id="next-page">
+                                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="text-center py-5">
+                    <div class="icon-container mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-images text-image-tea" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-body-emphasis mb-2">Belum Ada Gambar</h5>
+                    <p class="text-body-secondary">Upload gambar untuk mulai konversi</p>
+                </div>
+
+                <!-- No Results State -->
+                <div id="no-results-state" class="text-center py-5 d-none">
+                    <div class="icon-container mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-search text-image-tea" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-body-emphasis mb-2">Tidak Ada Hasil</h5>
+                    <p class="text-body-secondary">Tidak ditemukan gambar yang sesuai dengan pencarian</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

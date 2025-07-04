@@ -1,0 +1,735 @@
+class ImageConverter {
+    constructor() {
+        this.images = this.loadFromStorage();
+        this.currentFilter = '';
+        this.currentPage = 1;
+        this.itemsPerPage = 12;
+        this.selectedImages = new Set();
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.renderImages();
+        this.updateQualityDisplay();
+        this.updateCounts();
+    }
+
+    setupEventListeners() {
+        // File input and browse button
+        document.getElementById('browse-btn').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            this.handleFiles(e.target.files);
+        });
+
+        // Drag and drop
+        const dropZone = document.getElementById('drop-zone');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'rgba(83, 161, 27, 0.1)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'rgba(83, 161, 27, 0.05)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'rgba(83, 161, 27, 0.05)';
+            this.handleFiles(e.dataTransfer.files);
+        });
+
+        // Quality slider
+        document.getElementById('quality-slider').addEventListener('input', (e) => {
+            document.getElementById('quality-value').textContent = e.target.value;
+            this.updateEstimates();
+        });
+
+        // Format change
+        document.getElementById('format-select').addEventListener('change', () => {
+            this.updateEstimates();
+        });
+
+        // Resize options
+        document.getElementById('resize-select').addEventListener('change', (e) => {
+            const customContainer = document.getElementById('custom-size-container');
+            if (e.target.value === 'custom') {
+                customContainer.classList.remove('d-none');
+            } else {
+                customContainer.classList.add('d-none');
+            }
+            this.updateEstimates();
+        });
+
+        document.getElementById('custom-width').addEventListener('input', () => {
+            this.updateEstimates();
+        });
+
+        // Crop preset
+        document.getElementById('crop-select').addEventListener('change', () => {
+            this.updateEstimates();
+        });
+
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            this.currentFilter = e.target.value.toLowerCase();
+            this.currentPage = 1;
+            this.renderImages();
+        });
+
+        // Bulk actions
+        document.getElementById('clear-all-btn').addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin menghapus semua gambar?')) {
+                this.clearAll();
+            }
+        });
+
+        document.getElementById('convert-all-btn').addEventListener('click', () => {
+            this.convertSelectedToZip();
+        });
+
+        document.getElementById('select-all-btn').addEventListener('click', () => {
+            this.selectAll();
+        });
+
+        document.getElementById('deselect-all-btn').addEventListener('click', () => {
+            this.deselectAll();
+        });
+    }
+
+    async handleFiles(files) {
+        const validFiles = Array.from(files).filter(file => 
+            file.type.startsWith('image/') || file.type === 'application/pdf'
+        );
+
+        if (validFiles.length === 0) {
+            alert('Silakan pilih file gambar atau PDF yang valid');
+            return;
+        }
+
+        this.showProgress();
+
+        for (let i = 0; i < validFiles.length; i++) {
+            const file = validFiles[i];
+            const progress = ((i + 1) / validFiles.length) * 100;
+            this.updateProgress(progress, `Memproses ${file.name}...`);
+
+            try {
+                if (file.type === 'application/pdf') {
+                    await this.processPDF(file);
+                } else {
+                    const imageData = await this.processFile(file);
+                    this.images.push(imageData);
+                }
+            } catch (error) {
+                console.error('Error processing file:', file.name, error);
+            }
+        }
+
+        this.hideProgress();
+        this.saveToStorage();
+        this.renderImages();
+        this.updateCounts();
+    }
+
+    async processPDF(file) {
+        // For PDF processing, we'll store the file path and create a placeholder
+        // In a real implementation, you'd use PDF.js or similar library
+        const imageData = {
+            id: Date.now() + Math.random(),
+            name: file.name,
+            originalName: file.name,
+            size: file.size,
+            type: 'application/pdf',
+            width: 595, // A4 width in points
+            height: 842, // A4 height in points
+            filePath: URL.createObjectURL(file),
+            thumbnail: this.createPDFThumbnail(),
+            uploadDate: new Date().toISOString(),
+            isPDF: true
+        };
+        this.images.push(imageData);
+    }
+
+    createPDFThumbnail() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 150;
+        canvas.height = 200;
+        
+        // Create a simple PDF icon
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, 150, 200);
+        ctx.fillStyle = '#dc3545';
+        ctx.font = '16px FontAwesome';
+        ctx.textAlign = 'center';
+        ctx.fillText('📄', 75, 100);
+        ctx.fillStyle = '#6c757d';
+        ctx.font = '12px Arial';
+        ctx.fillText('PDF', 75, 130);
+        
+        return canvas.toDataURL('image/png');
+    }
+
+    async processFile(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const thumbnail = this.createThumbnail(canvas);
+
+                    resolve({
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        originalName: file.name,
+                        size: file.size,
+                        type: file.type,
+                        width: img.width,
+                        height: img.height,
+                        filePath: URL.createObjectURL(file),
+                        thumbnail: thumbnail,
+                        uploadDate: new Date().toISOString(),
+                        isPDF: false
+                    });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    createThumbnail(canvas) {
+        const thumbnailCanvas = document.createElement('canvas');
+        const ctx = thumbnailCanvas.getContext('2d');
+        
+        const maxSize = 150;
+        const ratio = Math.min(maxSize / canvas.width, maxSize / canvas.height);
+        
+        thumbnailCanvas.width = maxSize;
+        thumbnailCanvas.height = maxSize;
+        
+        const scaledWidth = canvas.width * ratio;
+        const scaledHeight = canvas.height * ratio;
+        const offsetX = (maxSize - scaledWidth) / 2;
+        const offsetY = (maxSize - scaledHeight) / 2;
+        
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, maxSize, maxSize);
+        ctx.drawImage(canvas, offsetX, offsetY, scaledWidth, scaledHeight);
+        
+        return thumbnailCanvas.toDataURL('image/jpeg', 0.8);
+    }
+
+    renderImages() {
+        const container = document.getElementById('images-container');
+        const emptyState = document.getElementById('empty-state');
+        const noResultsState = document.getElementById('no-results-state');
+        const paginationContainer = document.getElementById('pagination-container');
+
+        const filteredImages = this.images.filter(img => 
+            img.name.toLowerCase().includes(this.currentFilter)
+        );
+
+        if (this.images.length === 0) {
+            container.innerHTML = '';
+            emptyState.style.display = 'block';
+            noResultsState.style.display = 'none';
+            paginationContainer.classList.add('d-none');
+            return;
+        }
+
+        if (filteredImages.length === 0) {
+            container.innerHTML = '';
+            emptyState.style.display = 'none';
+            noResultsState.style.display = 'block';
+            paginationContainer.classList.add('d-none');
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        noResultsState.style.display = 'none';
+
+        // Pagination
+        const totalPages = Math.ceil(filteredImages.length / this.itemsPerPage);
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const currentImages = filteredImages.slice(startIndex, endIndex);
+
+        if (totalPages > 1) {
+            paginationContainer.classList.remove('d-none');
+            this.renderPagination(totalPages);
+        } else {
+            paginationContainer.classList.add('d-none');
+        }
+
+        container.innerHTML = currentImages.map(img => {
+            const estimate = this.calculateEstimate(img);
+            const isSelected = this.selectedImages.has(img.id);
+            
+            return `
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 ${isSelected ? 'border-success' : ''}">
+                        <div class="position-relative">
+                            <div class="d-flex align-items-center justify-content-center" 
+                                 style="height: 150px; background-color: #f8f9fa; border-radius: 0.375rem 0.375rem 0 0;">
+                                <img src="${img.thumbnail}" class="img-fluid" 
+                                     style="max-height: 148px; max-width: 100%; object-fit: contain;" alt="${img.name}">
+                            </div>
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <input type="checkbox" class="form-check-input" 
+                                       ${isSelected ? 'checked' : ''}
+                                       onchange="imageConverter.toggleSelection('${img.id}', this.checked)">
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
+                                    onclick="imageConverter.removeImage('${img.id}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            ${img.isPDF ? '<div class="position-absolute bottom-0 start-0 m-2"><span class="badge bg-danger">PDF</span></div>' : ''}
+                        </div>
+                        <div class="card-body d-flex flex-column p-3">
+                            <h6 class="card-title text-truncate mb-2" title="${img.name}">${img.name}</h6>
+                            <div class="small text-body-secondary mb-2">
+                                <div>${img.width} × ${img.height} px</div>
+                                <div>Ukuran: ${this.formatFileSize(img.size)}</div>
+                                <div class="text-success">Target: ~${estimate.size} (${estimate.format})</div>
+                                <div class="text-info">Estimasi: ${estimate.compression}</div>
+                            </div>
+                            <div class="mt-auto d-grid gap-2">
+                                <button class="btn btn-image-tea btn-sm"
+                                        onclick="imageConverter.convertImage('${img.id}')">
+                                    <i class="fas fa-download me-1"></i>Konversi & Unduh
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm"
+                                        onclick="imageConverter.previewImage('${img.id}')">
+                                    <i class="fas fa-eye me-1"></i>Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderPagination(totalPages) {
+        const pageNumbers = document.getElementById('page-numbers');
+        const prevPage = document.getElementById('prev-page');
+        const nextPage = document.getElementById('next-page');
+
+        // Clear existing page numbers
+        pageNumbers.innerHTML = '';
+
+        // Previous button
+        if (this.currentPage > 1) {
+            prevPage.classList.remove('disabled');
+            prevPage.onclick = () => {
+                this.currentPage--;
+                this.renderImages();
+            };
+        } else {
+            prevPage.classList.add('disabled');
+        }
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= this.currentPage - 2 && i <= this.currentPage + 2)) {
+                const pageItem = document.createElement('li');
+                pageItem.className = `page-item ${i === this.currentPage ? 'active' : ''}`;
+                pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                pageItem.onclick = () => {
+                    this.currentPage = i;
+                    this.renderImages();
+                };
+                pageNumbers.appendChild(pageItem);
+            } else if (i === this.currentPage - 3 || i === this.currentPage + 3) {
+                const ellipsis = document.createElement('li');
+                ellipsis.className = 'page-item disabled';
+                ellipsis.innerHTML = '<span class="page-link">...</span>';
+                pageNumbers.appendChild(ellipsis);
+            }
+        }
+
+        // Next button
+        if (this.currentPage < totalPages) {
+            nextPage.classList.remove('disabled');
+            nextPage.onclick = () => {
+                this.currentPage++;
+                this.renderImages();
+            };
+        } else {
+            nextPage.classList.add('disabled');
+        }
+    }
+
+    calculateEstimate(image) {
+        const format = document.getElementById('format-select').value;
+        const quality = parseInt(document.getElementById('quality-slider').value) / 100;
+        const resizeOption = document.getElementById('resize-select').value;
+        
+        let estimatedSize = image.size;
+        let targetFormat = format.toUpperCase();
+        
+        // Calculate size reduction based on format
+        switch (format) {
+            case 'jpeg':
+                estimatedSize = image.size * quality * 0.7;
+                break;
+            case 'webp':
+                estimatedSize = image.size * quality * 0.5;
+                break;
+            case 'avif':
+                estimatedSize = image.size * quality * 0.3;
+                break;
+            case 'png':
+                estimatedSize = image.size * 0.9;
+                break;
+        }
+        
+        // Apply resize reduction
+        if (resizeOption && resizeOption !== 'custom') {
+            const percentage = parseInt(resizeOption) / 100;
+            estimatedSize = estimatedSize * (percentage * percentage);
+        } else if (resizeOption === 'custom') {
+            const customWidth = parseInt(document.getElementById('custom-width').value) || image.width;
+            const ratio = customWidth / image.width;
+            estimatedSize = estimatedSize * (ratio * ratio);
+        }
+        
+        const compression = ((image.size - estimatedSize) / image.size * 100).toFixed(1);
+        
+        return {
+            size: this.formatFileSize(estimatedSize),
+            format: targetFormat,
+            compression: compression > 0 ? `-${compression}%` : 'Tidak ada kompresi'
+        };
+    }
+
+    updateEstimates() {
+        this.renderImages();
+    }
+
+    toggleSelection(imageId, checked) {
+        if (checked) {
+            this.selectedImages.add(imageId);
+        } else {
+            this.selectedImages.delete(imageId);
+        }
+        this.updateCounts();
+        this.renderImages();
+    }
+
+    selectAll() {
+        const filteredImages = this.images.filter(img => 
+            img.name.toLowerCase().includes(this.currentFilter)
+        );
+        filteredImages.forEach(img => this.selectedImages.add(img.id));
+        this.updateCounts();
+        this.renderImages();
+    }
+
+    deselectAll() {
+        this.selectedImages.clear();
+        this.updateCounts();
+        this.renderImages();
+    }
+
+    updateCounts() {
+        document.getElementById('total-images').textContent = this.images.length;
+        document.getElementById('selected-count').textContent = this.selectedImages.size;
+    }
+
+    async convertSelectedToZip() {
+        if (this.selectedImages.size === 0) {
+            alert('Pilih minimal satu gambar untuk dikonversi');
+            return;
+        }
+
+        // This would require JSZip library in a real implementation
+        alert(`Fitur ZIP akan mengkonversi ${this.selectedImages.size} gambar yang dipilih. Implementasi memerlukan library JSZip.`);
+    }
+
+    previewImage(imageId) {
+        const image = this.images.find(img => img.id == imageId);
+        if (!image) return;
+
+        // Open image in new window/tab for preview
+        if (image.isPDF) {
+            window.open(image.filePath, '_blank');
+        } else {
+            const img = new Image();
+            img.src = image.filePath;
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`
+                <html>
+                    <head><title>Preview - ${image.name}</title></head>
+                    <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+                        <img src="${image.filePath}" style="max-width:100%; max-height:100vh; object-fit:contain;">
+                    </body>
+                </html>
+            `);
+        }
+    }
+
+    async convertImage(imageId) {
+        const image = this.images.find(img => img.id == imageId);
+        if (!image) return;
+
+        if (image.isPDF) {
+            alert('Konversi PDF memerlukan library tambahan. Fitur akan ditambahkan pada versi mendatang.');
+            return;
+        }
+
+        const format = document.getElementById('format-select').value;
+        const quality = parseInt(document.getElementById('quality-slider').value) / 100;
+        const resizeOption = document.getElementById('resize-select').value;
+        const cropOption = document.getElementById('crop-select').value;
+
+        this.showProgress();
+        this.updateProgress(50, 'Mengkonversi gambar...');
+
+        try {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                let { width, height } = this.calculateDimensions(img.width, img.height, resizeOption, cropOption);
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Apply crop if needed
+                if (cropOption) {
+                    this.applyCrop(ctx, img, cropOption, width, height);
+                } else {
+                    ctx.drawImage(img, 0, 0, width, height);
+                }
+
+                let mimeType, extension, fileName;
+
+                switch (format) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        extension = 'png';
+                        break;
+                    case 'jpeg':
+                        mimeType = 'image/jpeg';
+                        extension = 'jpg';
+                        break;
+                    case 'webp':
+                        mimeType = 'image/webp';
+                        extension = 'webp';
+                        break;
+                    case 'avif':
+                        mimeType = 'image/avif';
+                        extension = 'avif';
+                        break;
+                }
+
+                const baseName = image.originalName.replace(/\.[^/.]+$/, '');
+                fileName = `${baseName}_converted.${extension}`;
+
+                this.updateProgress(80, 'Menyiapkan unduhan...');
+
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    this.updateProgress(100, 'Selesai!');
+                    setTimeout(() => this.hideProgress(), 1000);
+                }, mimeType, format === 'png' ? undefined : quality);
+            };
+            img.src = image.filePath;
+        } catch (error) {
+            console.error('Error converting image:', error);
+            alert('Gagal mengkonversi gambar');
+            this.hideProgress();
+        }
+    }
+
+    calculateDimensions(originalWidth, originalHeight, resizeOption, cropOption) {
+        let width = originalWidth;
+        let height = originalHeight;
+
+        // Apply resize first
+        if (resizeOption && resizeOption !== 'custom') {
+            const percentage = parseInt(resizeOption) / 100;
+            width = Math.round(originalWidth * percentage);
+            height = Math.round(originalHeight * percentage);
+        } else if (resizeOption === 'custom') {
+            const customWidth = parseInt(document.getElementById('custom-width').value) || originalWidth;
+            const ratio = customWidth / originalWidth;
+            width = customWidth;
+            height = Math.round(originalHeight * ratio);
+        }
+
+        // Apply crop dimensions
+        if (cropOption) {
+            const cropDimensions = this.getCropDimensions(cropOption, width, height);
+            width = cropDimensions.width;
+            height = cropDimensions.height;
+        }
+
+        return { width, height };
+    }
+
+    getCropDimensions(cropOption, currentWidth, currentHeight) {
+        const presets = {
+            '1:1': { ratio: 1 },
+            '4:5': { ratio: 4/5 },
+            '16:9': { ratio: 16/9 },
+            '1200:630': { width: 1200, height: 630 },
+            '1080:1920': { ratio: 9/16 },
+            'a4': { width: 595, height: 842 },
+            'a3': { width: 842, height: 1191 },
+            'letter': { width: 612, height: 792 },
+            'business': { width: 252, height: 144 },
+            'postcard': { width: 432, height: 288 },
+            '1920:1080': { width: 1920, height: 1080 },
+            '1366:768': { width: 1366, height: 768 },
+            '1280:720': { width: 1280, height: 720 }
+        };
+
+        const preset = presets[cropOption];
+        if (!preset) return { width: currentWidth, height: currentHeight };
+
+        if (preset.width && preset.height) {
+            return { width: preset.width, height: preset.height };
+        } else if (preset.ratio) {
+            if (currentWidth / currentHeight > preset.ratio) {
+                return { width: Math.round(currentHeight * preset.ratio), height: currentHeight };
+            } else {
+                return { width: currentWidth, height: Math.round(currentWidth / preset.ratio) };
+            }
+        }
+
+        return { width: currentWidth, height: currentHeight };
+    }
+
+    applyCrop(ctx, img, cropOption, targetWidth, targetHeight) {
+        // Center crop the image to fit the target dimensions
+        const sourceRatio = img.width / img.height;
+        const targetRatio = targetWidth / targetHeight;
+
+        let sourceWidth, sourceHeight, sourceX, sourceY;
+
+        if (sourceRatio > targetRatio) {
+            sourceHeight = img.height;
+            sourceWidth = img.height * targetRatio;
+            sourceX = (img.width - sourceWidth) / 2;
+            sourceY = 0;
+        } else {
+            sourceWidth = img.width;
+            sourceHeight = img.width / targetRatio;
+            sourceX = 0;
+            sourceY = (img.height - sourceHeight) / 2;
+        }
+
+        ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, targetWidth, targetHeight);
+    }
+
+    removeImage(imageId) {
+        this.images = this.images.filter(img => img.id != imageId);
+        this.selectedImages.delete(imageId);
+        this.saveToStorage();
+        this.renderImages();
+        this.updateCounts();
+    }
+
+    clearAll() {
+        this.images = [];
+        this.selectedImages.clear();
+        this.currentFilter = '';
+        this.currentPage = 1;
+        document.getElementById('search-input').value = '';
+        this.saveToStorage();
+        this.renderImages();
+        this.updateCounts();
+    }
+
+    showProgress() {
+        document.getElementById('progress-container').classList.remove('d-none');
+    }
+
+    hideProgress() {
+        document.getElementById('progress-container').classList.add('d-none');
+    }
+
+    updateProgress(percent, text) {
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-text').textContent = Math.round(percent) + '%';
+        
+        if (text) {
+            document.getElementById('progress-text').textContent = text;
+        }
+    }
+
+    updateQualityDisplay() {
+        const slider = document.getElementById('quality-slider');
+        const display = document.getElementById('quality-value');
+        display.textContent = slider.value;
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    saveToStorage() {
+        try {
+            const essentialData = this.images.map(img => ({
+                id: img.id,
+                name: img.name,
+                originalName: img.originalName,
+                size: img.size,
+                type: img.type,
+                width: img.width,
+                height: img.height,
+                filePath: img.filePath,
+                thumbnail: img.thumbnail,
+                uploadDate: img.uploadDate,
+                isPDF: img.isPDF || false
+            }));
+            localStorage.setItem('imageConverter_images', JSON.stringify(essentialData));
+        } catch (error) {
+            console.warn('Failed to save to localStorage:', error);
+        }
+    }
+
+    loadFromStorage() {
+        try {
+            const stored = localStorage.getItem('imageConverter_images');
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.warn('Failed to load from localStorage:', error);
+            return [];
+        }
+    }
+}
+
+let imageConverter;
+document.addEventListener('DOMContentLoaded', () => {
+    imageConverter = new ImageConverter();
+});
