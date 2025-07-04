@@ -54,16 +54,18 @@
                             </div>
 
                             <!-- Search -->
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Cari Gambar</label>
                                 <input type="text" id="search-input" class="form-control" placeholder="Nama file...">
                             </div>
 
-                            <!-- Clear Button -->
-                            <div class="col-md-1">
-                                <button id="clear-all-btn" class="btn btn-outline-danger w-100">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <!-- Stats -->
+                            <div class="col-md-2 text-end">
+                                <label class="form-label fw-bold">Status</label>
+                                <div class="small text-body-secondary">
+                                    <div>Total: <span id="total-images">0</span> gambar</div>
+                                    <div>Terpilih: <span id="selected-count">0</span> gambar</div>
+                                </div>
                             </div>
                         </div>
 
@@ -95,7 +97,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <!-- Bulk Actions -->
                                 <div class="d-flex gap-2">
                                     <button id="convert-all-btn" class="btn btn-image-tea">
@@ -107,7 +109,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <div class="d-flex gap-2 justify-content-end">
                                     <button id="deselect-all-btn" class="btn btn-outline-secondary">
                                         <i class="fas fa-square me-1"></i>Batal Pilih
@@ -116,13 +118,6 @@
                                         <i class="fas fa-trash me-1"></i>Hapus Semua
                                     </button>
                                 </div>
-                            </div>
-
-                            <div class="col-md-3 text-end">
-                                <small class="text-body-secondary">
-                                    Total: <span id="total-images">0</span> gambar | 
-                                    Dipilih: <span id="selected-count">0</span>
-                                </small>
                             </div>
                         </div>
                     </div>

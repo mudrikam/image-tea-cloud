@@ -288,6 +288,18 @@ html:not([data-bs-theme]) .theme-icon-auto,
 }
 
 .image-converter-page .card.selected .thumbnail-container {
-  border: 2px solid #53a11b;
+  border: none !important;
   border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.image-converter-page .card.selected .card-body {
+  border: none !important;
+}
+
+.image-converter-page .card.selected .btn {
+  border-color: initial !important;
+}
+
+.image-converter-page .card.selected .btn:not(.btn-image-tea):not(.btn-outline-secondary) {
+  border-color: #dee2e6 !important;
 }
