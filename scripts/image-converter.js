@@ -9,6 +9,7 @@ class ImageConverter {
     }
 
     init() {
+        this.initializePDFJS();
         this.setupEventListeners();
         this.renderImages();
         this.updateQualityDisplay();
@@ -143,64 +144,80 @@ class ImageConverter {
 
     async processPDF(file) {
         try {
-            // Check if pdf-image library is available
-            if (typeof PDFImage === 'undefined') {
-                console.warn('PDF-image library not loaded, using placeholder');
+            // Check if PDF.js is available
+            if (typeof pdfjsLib === 'undefined') {
+                console.warn('PDF.js library not loaded, using placeholder');
                 return this.createPDFPlaceholder(file);
             }
 
-            // Convert PDF to images using pdf-image library
+            // Load PDF document using the modern API
             const arrayBuffer = await file.arrayBuffer();
-            const images = await PDFImage.convert(arrayBuffer, {
-                scale: 1.5,
-                format: 'png'
+            const loadingTask = pdfjsLib.getDocument({
+                data: arrayBuffer,
+                cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.3.31/cmaps/',
+                cMapPacked: true,
             });
+            
+            const pdf = await loadingTask.promise;
+            
+            console.log(`Processing PDF with ${pdf.numPages} pages using PDF.js v5.3.31`);
 
-            // Check if conversion was successful
-            if (!images || images.length === 0) {
-                console.warn('PDF conversion failed, using placeholder');
-                return this.createPDFPlaceholder(file);
-            }
+            // Process each page
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                try {
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 2.0 }); // Higher resolution
+                    
+                    // Create canvas for rendering
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
 
-            // Process each page as a separate image
-            for (let index = 0; index < images.length; index++) {
-                const imageData = images[index];
-                const img = new Image();
-                
-                await new Promise((resolve, reject) => {
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                        
-                        const pdfPageData = {
-                            id: Date.now() + Math.random() + index,
-                            name: `${file.name.replace('.pdf', '')}_page_${index + 1}.png`,
-                            originalName: file.name,
-                            size: Math.floor(file.size / images.length),
-                            type: 'image/png',
-                            width: img.width,
-                            height: img.height,
-                            filePath: canvas.toDataURL('image/png'),
-                            thumbnail: this.createThumbnail(canvas),
-                            uploadDate: new Date().toISOString(),
-                            isPDF: true,
-                            pageNumber: index + 1
-                        };
-                        this.images.push(pdfPageData);
-                        resolve();
+                    // Render page to canvas with improved settings
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport,
+                        intent: 'display'
                     };
                     
-                    img.onerror = () => {
-                        console.warn(`Failed to load PDF page ${index + 1}`);
-                        reject(new Error(`Failed to load PDF page ${index + 1}`));
+                    await page.render(renderContext).promise;
+
+                    // Create image data for this page
+                    const pdfPageData = {
+                        id: Date.now() + Math.random() + pageNum,
+                        name: `${file.name.replace('.pdf', '')}_page_${pageNum}.png`,
+                        originalName: file.name,
+                        size: Math.floor(file.size / pdf.numPages),
+                        type: 'image/png',
+                        width: viewport.width,
+                        height: viewport.height,
+                        filePath: canvas.toDataURL('image/png'),
+                        thumbnail: this.createThumbnail(canvas),
+                        uploadDate: new Date().toISOString(),
+                        isPDF: true,
+                        pageNumber: pageNum
                     };
                     
-                    img.src = imageData;
-                });
+                    this.images.push(pdfPageData);
+                    
+                    // Update progress for each page
+                    this.updateProgress(
+                        (pageNum / pdf.numPages) * 100, 
+                        `Memproses halaman ${pageNum} dari ${pdf.numPages}...`
+                    );
+                    
+                } catch (pageError) {
+                    console.error(`Error processing page ${pageNum}:`, pageError);
+                }
             }
+            
+            console.log(`Successfully processed ${pdf.numPages} pages from PDF`);
+            
+            // Show success message
+            setTimeout(() => {
+                alert(`PDF berhasil dikonversi menjadi ${pdf.numPages} halaman gambar!`);
+            }, 500);
 
         } catch (error) {
             console.error('Error processing PDF:', error);
@@ -656,7 +673,7 @@ class ImageConverter {
         const image = this.images.find(img => img.id == imageId);
         if (!image) return;
 
-        // Handle PDF conversion - PDF pages are already converted to images
+        // Handle PDF pages - they are already converted to images and ready for processing
         if (image.isPDF && image.type === 'application/pdf') {
             alert('PDF ini belum dikonversi ke gambar. Silakan upload ulang PDF untuk konversi otomatis.');
             return;
@@ -707,12 +724,20 @@ class ImageConverter {
                         mimeType = 'image/avif';
                         extension = 'avif';
                         break;
+                    default:
+                        mimeType = 'image/png';
+                        extension = 'png';
                 }
 
                 const baseName = image.originalName.replace(/\.[^/.]+$/, '');
                 fileName = `${baseName}_converted.${extension}`;
+                
+                // For PDF pages, include page number in filename
+                if (image.isPDF && image.pageNumber) {
+                    fileName = `${baseName}_page_${image.pageNumber}_converted.${extension}`;
+                }
 
-                this.updateProgress(80, 'Menyiapkan unduhan...');
+                this.updateProgress(80, 'Menyimpan file...');
 
                 canvas.toBlob((blob) => {
                     const url = URL.createObjectURL(blob);
@@ -728,6 +753,13 @@ class ImageConverter {
                     setTimeout(() => this.hideProgress(), 1000);
                 }, mimeType, format === 'png' ? undefined : quality);
             };
+            
+            img.onerror = () => {
+                console.error('Error loading image for conversion');
+                alert('Gagal memuat gambar untuk konversi');
+                this.hideProgress();
+            };
+            
             img.src = image.filePath;
         } catch (error) {
             console.error('Error converting image:', error);
@@ -894,6 +926,17 @@ class ImageConverter {
         } catch (error) {
             console.warn('Failed to load from localStorage:', error);
             return [];
+        }
+    }
+
+    // Initialize PDF.js when the page loads
+    initializePDFJS() {
+        if (typeof pdfjsLib !== 'undefined') {
+            // Set worker path for PDF.js v5.3.31
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.3.31/build/pdf.worker.min.js';
+            console.log('PDF.js v5.3.31 initialized successfully');
+        } else {
+            console.warn('PDF.js not loaded - PDF processing will use placeholder');
         }
     }
 }
