@@ -698,7 +698,7 @@ class ImageConverter {
         if (!image) return;
 
         // Handle PDF pages - they are already converted to images and ready for processing
-        if (image.isPDF && image.type === 'application/pdf' && !image.pageNumber) {
+        if (image.type === 'application/pdf' && image.isPDF && !image.pageNumber) {
             alert('PDF ini belum dikonversi ke gambar. Silakan upload ulang PDF untuk konversi otomatis.');
             return;
         }
