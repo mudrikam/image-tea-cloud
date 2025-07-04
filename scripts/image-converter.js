@@ -1,6 +1,10 @@
 class ImageConverter {
     constructor() {
-        this.images = this.loadFromStorage();
+        this.db = null;
+        this.dbName = 'ImageConverterDB';
+        this.dbVersion = 1;
+        this.storeName = 'images';
+        this.images = [];
         this.currentFilter = '';
         this.currentPage = 1;
         this.itemsPerPage = 12;
@@ -8,12 +12,42 @@ class ImageConverter {
         this.init();
     }
 
-    init() {
+    async init() {
+        await this.initIndexedDB();
+        await this.loadFromStorage();
         this.initializePDFJS();
         this.setupEventListeners();
         this.renderImages();
         this.updateQualityDisplay();
         this.updateCounts();
+    }
+
+    async initIndexedDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            
+            request.onerror = () => {
+                console.error('IndexedDB error:', request.error);
+                reject(request.error);
+            };
+            
+            request.onsuccess = () => {
+                this.db = request.result;
+                console.log('IndexedDB initialized successfully');
+                resolve(this.db);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    const objectStore = db.createObjectStore(this.storeName, { keyPath: 'id' });
+                    objectStore.createIndex('name', 'name', { unique: false });
+                    objectStore.createIndex('uploadDate', 'uploadDate', { unique: false });
+                    console.log('IndexedDB object store created');
+                }
+            };
+        });
     }
 
     setupEventListeners() {
@@ -137,7 +171,7 @@ class ImageConverter {
         }
 
         this.hideProgress();
-        this.saveToStorage();
+        await this.saveToStorage();
         this.renderImages();
         this.updateCounts();
     }
@@ -839,21 +873,40 @@ class ImageConverter {
         ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, targetWidth, targetHeight);
     }
 
-    removeImage(imageId) {
+    async removeImage(imageId) {
         this.images = this.images.filter(img => img.id != imageId);
         this.selectedImages.delete(imageId);
-        this.saveToStorage();
+        
+        try {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const objectStore = transaction.objectStore(this.storeName);
+            await objectStore.delete(imageId);
+            console.log(`Removed image ${imageId} from IndexedDB`);
+        } catch (error) {
+            console.error('Error removing image from IndexedDB:', error);
+        }
+        
+        await this.saveToStorage();
         this.renderImages();
         this.updateCounts();
     }
 
-    clearAll() {
+    async clearAll() {
         this.images = [];
         this.selectedImages.clear();
         this.currentFilter = '';
         this.currentPage = 1;
         document.getElementById('search-input').value = '';
-        this.saveToStorage();
+        
+        try {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const objectStore = transaction.objectStore(this.storeName);
+            await objectStore.clear();
+            console.log('Cleared all images from IndexedDB');
+        } catch (error) {
+            console.error('Error clearing IndexedDB:', error);
+        }
+        
         this.renderImages();
         this.updateCounts();
     }
@@ -889,41 +942,54 @@ class ImageConverter {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    saveToStorage() {
+    async saveToStorage() {
+        if (!this.db) {
+            console.error('IndexedDB not initialized');
+            return;
+        }
+
         try {
-            // Only save essential metadata, not the actual image data
-            const essentialData = this.images.map(img => ({
-                id: img.id,
-                name: img.name,
-                originalName: img.originalName,
-                size: img.size,
-                type: img.type,
-                width: img.width,
-                height: img.height,
-                uploadDate: img.uploadDate,
-                isPDF: img.isPDF || false,
-                pageNumber: img.pageNumber || null
-                // Don't save filePath and thumbnail - they contain large base64 data
-            }));
-            localStorage.setItem('imageConverter_images', JSON.stringify(essentialData));
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const objectStore = transaction.objectStore(this.storeName);
+            
+            await objectStore.clear();
+            
+            for (const image of this.images) {
+                await objectStore.put(image);
+            }
+            
+            console.log(`Saved ${this.images.length} images to IndexedDB`);
         } catch (error) {
-            console.warn('Failed to save to localStorage:', error);
+            console.error('Failed to save to IndexedDB:', error);
+            alert('Gagal menyimpan gambar ke database browser. Beberapa gambar mungkin hilang setelah refresh.');
         }
     }
 
-    loadFromStorage() {
+    async loadFromStorage() {
+        if (!this.db) {
+            console.error('IndexedDB not initialized');
+            return;
+        }
+
         try {
-            const stored = localStorage.getItem('imageConverter_images');
-            if (stored) {
-                const parsedData = JSON.parse(stored);
-                // Return empty array since we can't restore image data after refresh
-                // Users will need to re-upload their images
-                return [];
-            }
-            return [];
+            const transaction = this.db.transaction([this.storeName], 'readonly');
+            const objectStore = transaction.objectStore(this.storeName);
+            const request = objectStore.getAll();
+            
+            return new Promise((resolve, reject) => {
+                request.onsuccess = () => {
+                    this.images = request.result || [];
+                    console.log(`Loaded ${this.images.length} images from IndexedDB`);
+                    resolve(this.images);
+                };
+                request.onerror = () => {
+                    console.error('Failed to load from IndexedDB:', request.error);
+                    reject(request.error);
+                };
+            });
         } catch (error) {
-            console.warn('Failed to load from localStorage:', error);
-            return [];
+            console.warn('Failed to load from IndexedDB:', error);
+            this.images = [];
         }
     }
 
