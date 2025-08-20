@@ -59,7 +59,7 @@ async function loadLatestVersion() {
                 // Final fallback for online version
                 const onlineVersionElement = document.getElementById('online-version');
                 if (onlineVersionElement) {
-                    onlineVersionElement.textContent = 'v2.1.0 Web';
+                    onlineVersionElement.textContent = 'v1.0.0 Web';
                     onlineVersionElement.classList.remove('bg-info');
                     onlineVersionElement.classList.add('bg-secondary');
                 }
@@ -72,7 +72,7 @@ async function loadLatestVersion() {
         // Fallback for desktop version
         const versionElement = document.getElementById('desktop-version');
         if (versionElement) {
-            versionElement.textContent = 'v2.1.0';
+            versionElement.textContent = 'v1.0.0';
             versionElement.classList.remove('bg-success');
             versionElement.classList.add('bg-secondary');
         }
@@ -80,7 +80,7 @@ async function loadLatestVersion() {
         // Fallback for online version
         const onlineVersionElement = document.getElementById('online-version');
         if (onlineVersionElement) {
-            onlineVersionElement.textContent = 'v2.1.0 Web';
+            onlineVersionElement.textContent = 'v1.0.0 Web';
             onlineVersionElement.classList.remove('bg-info');
             onlineVersionElement.classList.add('bg-secondary');
         }
@@ -194,7 +194,7 @@ class VersionManager {
             console.error('Error fetching web version:', error);
             // Set fallback web version
             this.webVersion = {
-                name: 'v2.1.0',
+                name: 'v1.0.0',
                 date: null,
                 description: 'Current stable web version',
                 url: 'https://github.com/mudrikam/image-tea-cloud'
