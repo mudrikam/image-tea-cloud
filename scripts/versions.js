@@ -5,8 +5,8 @@
 // Loads latest versions for desktop and online apps on landing page
 async function loadLatestVersion() {
     try {
-        // Load desktop version from Image-Tea-mini repo
-        const desktopResponse = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/releases/latest');
+        // Load desktop version from Image-Tea-nano repo
+        const desktopResponse = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-nano/releases/latest');
         if (desktopResponse.ok) {
             const desktopData = await desktopResponse.json();
 
@@ -105,7 +105,7 @@ class VersionManager {
     async fetchVersions() {
         try {
             // Fetch desktop versions
-            const response = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-mini/tags?per_page=100');
+            const response = await fetch('https://api.github.com/repos/mudrikam/Image-Tea-nano/tags?per_page=100');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -406,7 +406,7 @@ class VersionManager {
           <p class="text-body-secondary mb-3">
             Lihat semua versi dan changelog lengkap di GitHub
           </p>
-          <a href="https://github.com/mudrikam/Image-Tea-mini/tags" target="_blank" class="btn btn-image-tea-outline">
+          <a href="https://github.com/mudrikam/Image-Tea-nano/tags" target="_blank" class="btn btn-image-tea-outline">
             <i class="fab fa-github me-2"></i>Lihat di GitHub
           </a>
         </div>
